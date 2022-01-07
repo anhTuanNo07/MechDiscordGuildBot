@@ -1,5 +1,17 @@
 {
   "commands": {
+    "create:batch_channel": {
+      "settings": {
+        "loadApp": true,
+        "stayAlive": false
+      },
+      "commandPath": "./commands/CreateBatchChannel",
+      "commandName": "create:batch_channel",
+      "description": "auto create batch channel on discord",
+      "args": [],
+      "aliases": [],
+      "flags": []
+    },
     "dump:rcfile": {
       "settings": {},
       "commandPath": "@adonisjs/core/build/commands/DumpRc",

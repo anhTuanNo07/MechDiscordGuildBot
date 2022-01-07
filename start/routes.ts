@@ -26,4 +26,7 @@ Route.get('/', async () => {
 
 Route.group(() => {
   Route.get('bot/login', 'DiscordBotsController.login')
+  Route.get('check-valid-user/:id', 'DiscordBotsController.checkValidUser')
+  Route.post('role/create', 'DiscordBotsController.createNewRole')
+  Route.patch('role/:id', 'DiscordBotsController.updateRole')
 }).prefix('api/discord')
