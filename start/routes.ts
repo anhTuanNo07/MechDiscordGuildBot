@@ -26,7 +26,14 @@ Route.get('/', async () => {
 
 Route.group(() => {
   Route.get('bot/login', 'DiscordBotsController.login')
+  // Check valid user
   Route.get('check-valid-user/:id', 'DiscordBotsController.checkValidUser')
+  // Role CRUD
+  Route.get('role/:id', 'DiscordBotsController.getRole')
   Route.post('role/create', 'DiscordBotsController.createNewRole')
   Route.patch('role/:id', 'DiscordBotsController.updateRole')
+  Route.delete('role/:id', 'DiscordBotsController.deleteRole')
+  // Assign role for user
+  Route.post('user-role/create', 'DiscordBotsController.assignUserRole')
+  Route.delete('user-role/:userId', 'DiscordBotscontroller.removeUserRole')
 }).prefix('api/discord')
