@@ -1,6 +1,7 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { Client, Guild, Intents, PermissionResolvable, RoleResolvable } from 'discord.js'
 import Env from '@ioc:Adonis/Core/Env'
+import User from 'App/Models/User'
 
 export default class DiscordBotsController {
   public async login({ response }: HttpContextContract) {
@@ -28,6 +29,12 @@ export default class DiscordBotsController {
     // Confirm Guild Exist
     try {
       const member = await guild?.members.fetch(userId)
+
+      await User.firstOrCreate({
+        username: member?.user.username,
+        userId: userId,
+        guildMaster: false,
+      })
 
       response.ok({
         statusCode: 200,
@@ -80,7 +87,7 @@ export default class DiscordBotsController {
       })
   }
 
-  public async updateRole({ request, response }: HttpContextContract) {
+  public async updateRole({ request }: HttpContextContract) {
     const client = await this.autoLogin()
     const guild = await this.getGuild(client)
     const params: any = request.body()

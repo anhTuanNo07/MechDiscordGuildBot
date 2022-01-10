@@ -36,4 +36,6 @@ Route.group(() => {
   // Assign role for user
   Route.post('user-role/create', 'DiscordBotsController.assignUserRole')
   Route.delete('user-role/:userId', 'DiscordBotscontroller.removeUserRole')
+  // GuildMember
+  Route.patch('guild-member/update-guild/:id', 'GuildMembersController.updateGuildMember')
 }).prefix('api/discord')

@@ -46,9 +46,9 @@ export default class CreateBatchChannel extends BaseCommand {
       this.logger.fatal('Guild not found')
       return
     }
-    for (let i = 0; i <= 1; i++) {
+    for (let i = 0; i <= 3; i++) {
       await guild.channels
-        .create(`Channel của ny Tuấn thứ ${i}`, {
+        .create(`Channel thứ ${i}`, {
           reason: 'Need a channel for guild',
         })
         .then((channel) => console.log(channel))
