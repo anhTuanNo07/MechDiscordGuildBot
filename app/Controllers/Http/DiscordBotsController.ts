@@ -1,5 +1,13 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import { Client, Guild, Intents, PermissionResolvable, RoleResolvable } from 'discord.js'
+import {
+  Client,
+  Collection,
+  Guild,
+  GuildMember,
+  Intents,
+  PermissionResolvable,
+  RoleResolvable,
+} from 'discord.js'
 import Env from '@ioc:Adonis/Core/Env'
 import User from 'App/Models/User'
 
@@ -33,13 +41,14 @@ export default class DiscordBotsController {
       await User.firstOrCreate({
         username: member?.user.username,
         userId: userId,
-        guildMaster: false,
+        discriminator: member?.user.discriminator,
       })
 
       response.ok({
         statusCode: 200,
         message: 'valid user',
         data: {
+          userId: userId,
           username: member?.user.username,
           discriminator: member?.user.discriminator,
         },
@@ -52,6 +61,40 @@ export default class DiscordBotsController {
         message: message,
       })
     }
+  }
+
+  public async checkValidateUsername({ request, response }: HttpContextContract) {
+    const client = await this.autoLogin()
+    const guild = await this.getGuild(client)
+    const username = request.param('username')
+    const discriminator = request.all().discriminator
+
+    // fetch user for param
+    const memberQuery = await guild?.members.search({
+      query: username,
+    })
+
+    const validUsername = await this.fetchUsername(memberQuery, username, discriminator)
+    if (!validUsername) {
+      response.badRequest({
+        statusCode: 400,
+        message: 'Unknown username',
+      })
+    }
+
+    const data = {
+      userId: validUsername?.user.id,
+      username: validUsername?.user.username,
+      discriminator: validUsername?.user.discriminator,
+    }
+
+    await User.firstOrCreate(data)
+
+    response.ok({
+      statusCode: 200,
+      message: 'valid user',
+      data: data,
+    })
   }
 
   // --- Handle about role ---
@@ -208,7 +251,8 @@ export default class DiscordBotsController {
 
   // --- End handle about role ---
 
-  // private function
+  // --- private function ---
+
   // login for bot
   private async autoLogin(): Promise<Client> {
     const client = new Client({ intents: [Intents.FLAGS.GUILDS] })
@@ -220,5 +264,25 @@ export default class DiscordBotsController {
   // retrieve the server information
   private async getGuild(client: Client<boolean>): Promise<Guild | undefined> {
     return client.guilds.cache.get(Env.get('SERVER_ID'))
+  }
+
+  // fetch user
+  private async fetchUsername(
+    discordQuery: Collection<string, GuildMember> | undefined,
+    username: string,
+    discriminator: string
+  ): Promise<GuildMember | undefined> {
+    if (discordQuery === undefined) {
+      return
+    }
+
+    let returnValue: undefined | GuildMember = undefined
+
+    discordQuery.forEach((value) => {
+      if (username === value.user.username && discriminator === value.user.discriminator) {
+        returnValue = value
+      }
+    })
+    return returnValue
   }
 }

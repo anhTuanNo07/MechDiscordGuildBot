@@ -1,6 +1,8 @@
 import Env from '@ioc:Adonis/Core/Env'
-import { Client, Intents } from 'discord.js'
+import { Client, Intents, Permissions } from 'discord.js'
 import { BaseCommand } from '@adonisjs/core/build/standalone'
+import Database from '@ioc:Adonis/Lucid/Database'
+import GuildChannel from 'App/Models/GuildChannel'
 
 export default class CreateBatchChannel extends BaseCommand {
   /**
@@ -46,12 +48,71 @@ export default class CreateBatchChannel extends BaseCommand {
       this.logger.fatal('Guild not found')
       return
     }
-    for (let i = 0; i <= 3; i++) {
-      await guild.channels
-        .create(`Channel thứ ${i}`, {
-          reason: 'Need a channel for guild',
-        })
-        .then((channel) => console.log(channel))
+    // for (let i = 0; i <= 3; i++) {
+    //   await guild.channels
+    //     .create(`Channel thứ ${i}`, {
+    //       reason: 'Need a channel for guild',
+    //     })
+    //     .then((channel) => console.log(channel))
+    // }
+    this.logger.info(`Start creating channel...`)
+    await client.login(token)
+    const guildObject = client.guilds.cache.get(Env.get('SERVER_ID'))
+    // console.log(guildObject, 'object')
+    const everyoneRole = await guildObject?.roles.everyone.id
+    console.log(everyoneRole, '@everyone')
+
+    // start generating guild channels
+    const guildStack = await Database.query()
+      .from('guild_channels')
+      .where('generated_channel', 'false')
+
+    if (!guildStack.length) {
+      this.logger.fatal('All guild channels are created!')
+      return
     }
+
+    await Promise.all(
+      guildStack.map(async (guildRecord) => {
+        await guild.channels
+          .create(guildRecord.guild_name, {
+            permissionOverwrites: [
+              {
+                id: '928156773427327057',
+                deny: [Permissions.FLAGS.VIEW_CHANNEL],
+              },
+            ],
+            reason: 'create batch of guild channel',
+          })
+          .then(async (channel) => {
+            // set private for @everyone
+
+            // // console.log(everyoneRole, 'everyoneRole')
+            // if (everyoneRole) {
+            //   channel.permissionOverwrites.set([
+            //     {
+            //       id: everyoneRole,
+            //       deny: [Permissions.FLAGS.VIEW_CHANNEL],
+            //     },
+            //   ])
+            // }
+
+            // update guilds table
+            const guild = await GuildChannel.findBy('guild_name', channel.name)
+            if (guild) {
+              guild.guildId = channel.id
+              guild.generatedChannel = true
+              await guild.save()
+              this.logger.info(`Create guild channel '${channel.name}' successfully.`)
+            } else {
+              throw new Error(
+                'Create guild channel error. Please check guilds table for more information'
+              )
+            }
+          })
+          .catch((error) => this.logger.error(error.message))
+      })
+    )
+    this.logger.info('Create guilds successfully!')
   }
 }

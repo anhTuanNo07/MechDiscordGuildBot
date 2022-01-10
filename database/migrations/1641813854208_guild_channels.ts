@@ -1,17 +1,15 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema'
 
-export default class Users extends BaseSchema {
-  protected tableName = 'users'
+export default class GuildChannels extends BaseSchema {
+  protected tableName = 'guild_channels'
 
   public async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
-
-      table.text('username').notNullable()
-      table.text('discriminator').notNullable()
-      table.text('user_id').notNullable().unique()
-      table.text('role_id')
-      table.integer('guild_id')
+      table.text('guild_name').notNullable().unique()
+      table.text('guild_id').unique()
+      table.text('guild_master').unique()
+      table.boolean('generated_channel').notNullable()
 
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL

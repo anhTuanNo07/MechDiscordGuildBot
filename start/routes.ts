@@ -28,6 +28,7 @@ Route.group(() => {
   Route.get('bot/login', 'DiscordBotsController.login')
   // Check valid user
   Route.get('check-valid-user/:id', 'DiscordBotsController.checkValidUser')
+  Route.get('check-valid-username/:username', 'DiscordBotsController.checkValidateUsername')
   // Role CRUD
   Route.get('role/:id', 'DiscordBotsController.getRole')
   Route.post('role/create', 'DiscordBotsController.createNewRole')
@@ -38,4 +39,6 @@ Route.group(() => {
   Route.delete('user-role/:userId', 'DiscordBotscontroller.removeUserRole')
   // GuildMember
   Route.patch('guild-member/update-guild/:id', 'GuildMembersController.updateGuildMember')
+  //GuildManager
+  Route.post('guild-channel-disable/:channelId', 'GuildMembersController.disableChannel')
 }).prefix('api/discord')
