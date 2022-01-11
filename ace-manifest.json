@@ -1,5 +1,17 @@
 {
   "commands": {
+    "create:batch_assign_role": {
+      "settings": {
+        "loadApp": true,
+        "stayAlive": false
+      },
+      "commandPath": "./commands/CreateBatchAssignRole",
+      "commandName": "create:batch_assign_role",
+      "description": "create batch for assign role for user",
+      "args": [],
+      "aliases": [],
+      "flags": []
+    },
     "create:batch_channel": {
       "settings": {
         "loadApp": true,
@@ -8,6 +20,30 @@
       "commandPath": "./commands/CreateBatchChannel",
       "commandName": "create:batch_channel",
       "description": "auto create batch channel on discord",
+      "args": [],
+      "aliases": [],
+      "flags": []
+    },
+    "create:batch_role": {
+      "settings": {
+        "loadApp": true,
+        "stayAlive": false
+      },
+      "commandPath": "./commands/CreateBatchRole",
+      "commandName": "create:batch_role",
+      "description": "auto create batch role on discord",
+      "args": [],
+      "aliases": [],
+      "flags": []
+    },
+    "delete:batch_channel": {
+      "settings": {
+        "loadApp": true,
+        "stayAlive": false
+      },
+      "commandPath": "./commands/DeleteBatchChannel",
+      "commandName": "delete:batch_channel",
+      "description": "auto delete batch channel (for test only)",
       "args": [],
       "aliases": [],
       "flags": []

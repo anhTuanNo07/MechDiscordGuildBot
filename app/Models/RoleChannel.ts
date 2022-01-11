@@ -1,21 +1,18 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
 
-export default class GuildChannel extends BaseModel {
+export default class RoleChannel extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
   @column()
-  public guildName: string
+  public roleName: string
 
   @column()
-  public guildId: string | null
+  public roleId: string | null
 
   @column()
-  public guildMaster: string | null
-
-  @column()
-  public generatedChannel: boolean
+  public generatedRole: boolean
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

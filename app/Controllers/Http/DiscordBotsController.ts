@@ -10,6 +10,7 @@ import {
 } from 'discord.js'
 import Env from '@ioc:Adonis/Core/Env'
 import User from 'App/Models/User'
+import RoleChannel from 'App/Models/RoleChannel'
 
 export default class DiscordBotsController {
   public async login({ response }: HttpContextContract) {
@@ -202,6 +203,12 @@ export default class DiscordBotsController {
     try {
       const member = await guild?.members.fetch(userId)
       const roleMember = await member?.roles.add(roleId)
+      const roleRecord = await RoleChannel.findBy('role_id', roleId)
+      const userRecord = await User.findBy('user_id', userId)
+      if (userRecord && roleRecord) {
+        userRecord.roleId = roleRecord.id.toString()
+        await userRecord.save()
+      }
       response.ok({
         statusCode: 200,
         message: 'assign role successfully.',

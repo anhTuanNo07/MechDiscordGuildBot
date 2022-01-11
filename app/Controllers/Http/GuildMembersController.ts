@@ -11,6 +11,7 @@ import {
   RoleResolvable,
 } from 'discord.js'
 import GuildChannel from 'App/Models/GuildChannel'
+import RoleChannel from 'App/Models/RoleChannel'
 // import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 export default class GuildMembersController {
@@ -23,18 +24,36 @@ export default class GuildMembersController {
 
     const user = await User.findBy('user_id', userId)
     if (user) {
-      const guild = await GuildChannel.firstOrCreate({
-        guildName: guildName,
-        generatedChannel: false,
-      })
+      // update guild
 
-      //update user information
-      user.guildId = guild.id
-      await user.save()
-      //update guildMember information
-      if (guildMaster) {
-        guild.guildMaster = user.userId
-        await guild.save()
+      const guild = await GuildChannel.findBy('guild_name', guildName)
+      if (!guild) {
+        await GuildChannel.create({
+          guildName: guildName,
+          generatedChannel: false,
+        })
+      } else {
+        //update user information
+        user.guildId = guild.id
+        await user.save()
+        //update guildMember information
+        if (guildMaster) {
+          guild.guildMaster = user.userId
+          await guild.save()
+        }
+      }
+
+      // update role
+      // const role = await RoleChannel.firstOrCreate({
+      //   roleName: guildName,
+      //   generatedRole: false,
+      // })
+      const role = await RoleChannel.findBy('role_name', guildName)
+      if (!role) {
+        await RoleChannel.create({
+          roleName: guildName,
+          generatedRole: false,
+        })
       }
 
       response.ok({
