@@ -1,113 +1,176 @@
-import Env from '@ioc:Adonis/Core/Env'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import User from 'App/Models/User'
-import {
-  Client,
-  Collection,
-  Guild,
-  GuildMember,
-  Intents,
-  PermissionResolvable,
-  RoleResolvable,
-} from 'discord.js'
 import GuildChannel from 'App/Models/GuildChannel'
 import RoleChannel from 'App/Models/RoleChannel'
-// import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import { autoLogin, getGuild } from 'App/Utils/DiscordBotUtils'
+import { userRoleValidator } from 'App/Schema/UserRoleValidator'
+import { assignUserRoleOnDiscord, unassignUserRoleOnDiscord } from 'App/Utils/GuildMembersUtils'
 
 export default class GuildMembersController {
-  public async updateGuildMember({ request, response }: HttpContextContract) {
-    const userId = request.param('id')
-    const param = request.body()
-    const guildName = param.guildName
-    const guildMaster = param.guildMaster
-    console.log(userId, 'userId')
+  // ------------------------------
+  // --- CRUD user-role-assign  ---
+  // ------------------------------
 
-    const user = await User.findBy('user_id', userId)
-    if (user) {
-      // update guild
-
-      const guild = await GuildChannel.findBy('guild_name', guildName)
-      if (!guild) {
-        await GuildChannel.create({
-          guildName: guildName,
-          generatedChannel: false,
-        })
-      } else {
-        //update user information
-        user.guildId = guild.id
-        await user.save()
-        //update guildMember information
-        if (guildMaster) {
-          guild.guildMaster = user.userId
-          await guild.save()
-        }
-      }
-
-      // update role
-      // const role = await RoleChannel.firstOrCreate({
-      //   roleName: guildName,
-      //   generatedRole: false,
-      // })
-      const role = await RoleChannel.findBy('role_name', guildName)
-      if (!role) {
-        await RoleChannel.create({
-          roleName: guildName,
-          generatedRole: false,
-        })
-      }
-
-      response.ok({
-        statusCode: 200,
-        message: 'update guild member information successfully',
-      })
-    } else {
+  public async assignUserRole({ request, response }: HttpContextContract) {
+    // validate input data
+    const payload = await request.validate({
+      schema: userRoleValidator,
+      data: request.body(),
+    })
+    const userId = payload.userId
+    const roleId = payload.roleId
+    // validate exist user
+    const userRecord = await User.findBy('user_id', userId)
+    if (!userRecord) {
       response.notFound({
-        statusCode: 400,
-        message: 'user not found',
+        statusCode: 404,
+        message: 'user unknown',
       })
-    }
-  }
-
-  public async disableChannel({ request, response }: HttpContextContract) {
-    const client = await this.autoLogin()
-    const guild = await this.getGuild(client)
-    const channelId = request.param('channelId')
-    const everyoneRole = await guild?.roles.everyone.id
-    // guild?.channels.
-  }
-
-  // --- private function ---
-
-  // login for bot
-  private async autoLogin(): Promise<Client> {
-    const client = new Client({ intents: [Intents.FLAGS.GUILDS] })
-    const token = Env.get('BOT_TOKEN')
-    await client.login(token)
-    return client
-  }
-
-  // retrieve the server information
-  private async getGuild(client: Client<boolean>): Promise<Guild | undefined> {
-    return client.guilds.cache.get(Env.get('SERVER_ID'))
-  }
-
-  // fetch user
-  private async fetchUsername(
-    discordQuery: Collection<string, GuildMember> | undefined,
-    username: string,
-    discriminator: string
-  ): Promise<GuildMember | undefined> {
-    if (discordQuery === undefined) {
       return
     }
 
-    let returnValue: undefined | GuildMember = undefined
+    // validate exist role
+    const roleRecord = await RoleChannel.findBy('role_id', roleId)
+    if (!roleRecord) {
+      response.notFound({
+        statusCode: 404,
+        message: 'role unknown',
+      })
+      return
+    }
 
-    discordQuery.forEach((value) => {
-      if (username === value.user.username && discriminator === value.user.discriminator) {
-        returnValue = value
+    // validate user has had a certain role
+    if (userRecord.roleId) {
+      await unassignUserRoleOnDiscord(userId, roleId)
+    }
+
+    try {
+      const roleMember = await assignUserRoleOnDiscord(userId, roleId)
+      const roleRecord = await RoleChannel.findBy('role_id', roleId)
+      const userRecord = await User.findBy('user_id', userId)
+      if (userRecord && roleRecord) {
+        userRecord.roleId = roleRecord.id.toString()
+        await userRecord.save()
       }
-    })
-    return returnValue
+      response.ok({
+        statusCode: 200,
+        message: 'assign role successfully.',
+        data: {
+          userId: roleMember?.id,
+          username: roleMember?.user.username,
+          discriminator: roleMember?.user.discriminator,
+          roleId: roleId,
+        },
+      })
+    } catch {
+      response.internalServerError({
+        statusCode: 500,
+        message: 'update on discord or db erupt ',
+      })
+    }
   }
+
+  public async removeUserRole({ request, response }: HttpContextContract) {
+    // validate input data
+    const payload = await request.validate({
+      schema: userRoleValidator,
+      data: request.body(),
+    })
+    const userId = payload.userId
+    const roleId = payload.roleId
+
+    // validate exist user
+    const userRecord = await User.findBy('user_id', userId)
+    if (!userRecord) {
+      response.notFound({
+        statusCode: 404,
+        message: 'user unknown',
+      })
+      return
+    }
+
+    // validate exist role
+    const roleRecord = await RoleChannel.findBy('role_id', roleId)
+    if (!roleRecord) {
+      response.notFound({
+        statusCode: 404,
+        message: 'role unknown',
+      })
+      return
+    }
+
+    try {
+      const roleMember = await unassignUserRoleOnDiscord(userId, roleId)
+      response.ok({
+        statusCode: 200,
+        message: 'remove role successfully.',
+        data: {
+          userId: roleMember?.id,
+          username: roleMember?.user.username,
+          discriminator: roleMember?.user.discriminator,
+          roleId: roleId,
+        },
+      })
+    } catch {
+      response.internalServerError({
+        statusCode: 400,
+        message: 'remove role on discord or server error',
+      })
+    }
+    userRecord.roleId = null
+    await userRecord.save()
+  }
+  // --- End handle about assign role for user ---
+  // public async updateGuildMember({ request, response }: HttpContextContract) {
+  //   const userId = request.param('id')
+  //   const param = request.body()
+  //   const guildName = param.guildName
+  //   const guildMaster = param.guildMaster
+  //   console.log(userId, 'userId')
+
+  //   const user = await User.findBy('user_id', userId)
+  //   if (user) {
+  //     // update guild
+
+  //     const guild = await GuildChannel.findBy('guild_name', guildName)
+  //     if (!guild) {
+  //       await GuildChannel.create({
+  //         guildName: guildName,
+  //         generatedChannel: false,
+  //       })
+  //     } else {
+  //       //update user information
+  //       user.guildId = guild.id
+  //       await user.save()
+  //       //update guildMember information
+  //       if (guildMaster) {
+  //         guild.guildMaster = user.userId
+  //         await guild.save()
+  //       }
+  //     }
+
+  //     // update role
+  //     // const role = await RoleChannel.firstOrCreate({
+  //     //   roleName: guildName,
+  //     //   generatedRole: false,
+  //     // })
+  //     const role = await RoleChannel.findBy('role_name', guildName)
+  //     if (!role) {
+  //       await RoleChannel.create({
+  //         roleName: guildName,
+  //         generatedRole: false,
+  //       })
+  //     }
+
+  //     response.ok({
+  //       statusCode: 200,
+  //       message: 'update guild member information successfully',
+  //     })
+  //   } else {
+  //     response.notFound({
+  //       statusCode: 400,
+  //       message: 'user not found',
+  //     })
+  //   }
+  // }
 }

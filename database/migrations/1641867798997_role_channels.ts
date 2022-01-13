@@ -8,6 +8,7 @@ export default class RoleChannels extends BaseSchema {
       table.increments('id')
       table.text('role_name').notNullable().unique()
       table.text('role_id').unique()
+      table.text('master_role_id').unique()
       table.boolean('generated_role').notNullable()
 
       /**

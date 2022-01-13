@@ -1,6 +1,11 @@
+import Env from '@ioc:Adonis/Core/Env'
 import {
+  Client,
+  Collection,
   CreateRoleOptions,
   Guild,
+  GuildMember,
+  Intents,
   Permissions,
   Role,
   RoleData,
@@ -88,7 +93,7 @@ export function fetchRoleUpdateData(payload: any, roleId: string) {
 }
 
 export function fetchRoleResponse(role: Role) {
-  let dataResponse: DataResponse = {
+  let dataResponse: RoleDataResponse = {
     color: role.color,
     guild: role.guild,
     hoist: role.hoist,
@@ -106,7 +111,7 @@ export function fetchRoleResponse(role: Role) {
 }
 
 // Define type of data
-interface DataResponse {
+interface RoleDataResponse {
   color: number
   guild: Guild
   hoist: boolean
@@ -125,4 +130,41 @@ interface UpdateRoleData {
   role: RoleResolvable
   reason?: string
   options: RoleData
+}
+
+// ------------------------------
+// --- utils function for bot ---
+// ------------------------------
+
+// login for bot
+export async function autoLogin(): Promise<Client> {
+  const client = new Client({ intents: [Intents.FLAGS.GUILDS] })
+  const token = Env.get('BOT_TOKEN')
+  await client.login(token)
+  return client
+}
+
+// retrieve the server information
+export async function getGuild(client: Client<boolean>): Promise<Guild | undefined> {
+  return client.guilds.cache.get(Env.get('SERVER_ID'))
+}
+
+// fetch user
+export async function fetchUsername(
+  discordQuery: Collection<string, GuildMember> | undefined,
+  username: string,
+  discriminator: string
+): Promise<GuildMember | undefined> {
+  if (discordQuery === undefined) {
+    return
+  }
+
+  let returnValue: undefined | GuildMember = undefined
+
+  discordQuery.forEach((value) => {
+    if (username === value.user.username && discriminator === value.user.discriminator) {
+      returnValue = value
+    }
+  })
+  return returnValue
 }

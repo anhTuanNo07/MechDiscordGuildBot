@@ -15,10 +15,13 @@ export default class User extends BaseModel {
   public userId: string
 
   @column()
-  public roleId: string
+  public roleId: string | null
 
   @column()
   public guildId: number
+
+  @column()
+  public isMaster: boolean
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

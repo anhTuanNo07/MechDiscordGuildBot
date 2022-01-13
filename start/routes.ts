@@ -36,15 +36,16 @@ Route.group(() => {
   Route.delete('role/:id', 'DiscordBotsController.deleteRole')
 
   // --- Assign role for user ---
-  // Updating...
-  Route.post('user-role', 'DiscordBotsController.assignUserRole')
-  Route.delete('user-role/:userId', 'DiscordBotController.removeUserRole')
+  Route.post('user-role', 'GuildMembersController.assignUserRole')
+  Route.delete('user-role', 'GuildMembersController.removeUserRole')
 
   // --- GuildMember ---
-  // Updating...
-  Route.patch('add-member/:id', 'GuildMembersController.updateGuildMember')
+  // special strong for assign master guild
+  Route.patch('user/:id', 'GuildMembersController.updateGuildMember')
 
   // --- GuildManager ---
-  // Updating...
-  Route.post('disable-channel/:channelId', 'GuildMembersController.disableChannel')
+  Route.post('guild', 'GuildChannelsController.createGuild')
+  Route.patch('guild/:guildId', 'GuildChannelsController.updateGuild')
+  Route.get('guild/:guildId', 'GuildChannelsController.getGuild')
+  // Cannot delete guild as information on blockchain is uncertainty
 }).prefix('api/discord')
