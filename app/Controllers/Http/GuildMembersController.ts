@@ -1,8 +1,6 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import User from 'App/Models/User'
-import GuildChannel from 'App/Models/GuildChannel'
 import RoleChannel from 'App/Models/RoleChannel'
-import { autoLogin, getGuild } from 'App/Utils/DiscordBotUtils'
 import { userRoleValidator } from 'App/Schema/UserRoleValidator'
 import { assignUserRoleOnDiscord, unassignUserRoleOnDiscord } from 'App/Utils/GuildMembersUtils'
 
@@ -121,6 +119,12 @@ export default class GuildMembersController {
     await userRecord.save()
   }
   // --- End handle about assign role for user ---
+
+  // TO_DO_______
+  // This function is modified for guild master
+  // But the guild master role is partially controlled on smart contract
+  // So this function is left by the comment for reuse
+
   // public async updateGuildMember({ request, response }: HttpContextContract) {
   //   const userId = request.param('id')
   //   const param = request.body()

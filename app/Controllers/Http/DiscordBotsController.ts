@@ -79,7 +79,7 @@ export default class DiscordBotsController {
 
     // check user information and save if not in database
     try {
-      const userRecord = await User.firstOrCreate(data)
+      await User.firstOrCreate(data)
       // user validation successfully
       response.ok({
         statusCode: 200,
@@ -97,10 +97,6 @@ export default class DiscordBotsController {
   // ------------------------------
   // --- Handle about role ---
   // ------------------------------
-
-  /* Note that this CRUD is just for create guild master role. The other normal role is conducted automatically by command
-  /  The RULE for create master role is 'channel_name'+'_master'
-  /  Example: guild name: eagle_guild -> master role: eagle_guild_master */
 
   public async createNewRole({ request, response }: HttpContextContract) {
     // Input validation

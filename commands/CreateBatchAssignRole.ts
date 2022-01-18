@@ -1,8 +1,8 @@
 import Env from '@ioc:Adonis/Core/Env'
 import { Client, Intents, Permissions } from 'discord.js'
 import { BaseCommand } from '@adonisjs/core/build/standalone'
-import Database from '@ioc:Adonis/Lucid/Database'
-import GuildChannel from 'App/Models/GuildChannel'
+// import Database from '@ioc:Adonis/Lucid/Database'
+// import GuildChannel from 'App/Models/GuildChannel'
 
 export default class CreateBatchAssignRole extends BaseCommand {
   /**

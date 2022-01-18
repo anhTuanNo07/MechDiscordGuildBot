@@ -80,6 +80,7 @@ export default class CreateBatchRole extends BaseCommand {
               const roleRecord = await RoleChannel.findBy('role_name', role.name)
               if (roleRecord) {
                 roleRecord.roleId = role.id
+                roleRecord.generatedRole = true
                 await roleRecord.save()
                 this.logger.info(`Create role channel '${role.name}' successfully.`)
               } else {
@@ -92,36 +93,39 @@ export default class CreateBatchRole extends BaseCommand {
           .catch((error) => this.logger.error(error.message))
 
         // create master role
-        await guild.roles
-          .create({
-            name: roleRecord.role_name,
-            color: 'DARK_RED',
-            permissions: Permissions.FLAGS.MANAGE_CHANNELS,
-          })
-          .then(
-            // fet the role for the suitable channel
-            async (role) => {
-              const channelRecord = await GuildChannel.findBy('guild_name', role.name)
-              if (channelRecord && channelRecord.guildId) {
-                const channel = await guild.channels.fetch(channelRecord.guildId)
-                await channel?.permissionOverwrites.create(role.id, { MANAGE_CHANNELS: true })
-              }
+        // ---
+        // Create more role for guild master, but the mechanism is conducted via smart contract
+        // So this function will be commented for reuse
+        // await guild.roles
+        //   .create({
+        //     name: roleRecord.role_name,
+        //     color: 'DARK_RED',
+        //     permissions: Permissions.FLAGS.MANAGE_CHANNELS,
+        //   })
+        //   .then(
+        //     // fet the role for the suitable channel
+        //     async (role) => {
+        //       const channelRecord = await GuildChannel.findBy('guild_name', role.name)
+        //       if (channelRecord && channelRecord.guildId) {
+        //         const channel = await guild.channels.fetch(channelRecord.guildId)
+        //         await channel?.permissionOverwrites.create(role.id, { MANAGE_CHANNELS: true })
+        //       }
 
-              // update roles table
-              const roleRecord = await RoleChannel.findBy('role_name', role.name)
-              if (roleRecord) {
-                roleRecord.masterRoleId = role.id
-                roleRecord.generatedRole = true
-                await roleRecord.save()
-                this.logger.info(`Create master role channel '${role.name}' successfully.`)
-              } else {
-                throw new Error(
-                  'Create role channel error. Please check the roles table for more information.'
-                )
-              }
-            }
-          )
-          .catch((error) => this.logger.error(error.message))
+        //       // update roles table
+        //       const roleRecord = await RoleChannel.findBy('role_name', role.name)
+        //       if (roleRecord) {
+        //         roleRecord.masterRoleId = role.id
+        //         roleRecord.generatedRole = true
+        //         await roleRecord.save()
+        //         this.logger.info(`Create master role channel '${role.name}' successfully.`)
+        //       } else {
+        //         throw new Error(
+        //           'Create role channel error. Please check the roles table for more information.'
+        //         )
+        //       }
+        //     }
+        //   )
+        //   .catch((error) => this.logger.error(error.message))
       })
     )
     this.logger.info('Create roles successfully!')

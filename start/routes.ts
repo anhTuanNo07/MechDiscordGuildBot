@@ -48,4 +48,6 @@ Route.group(() => {
   Route.patch('guild/:guildId', 'GuildChannelsController.updateGuild')
   Route.get('guild/:guildId', 'GuildChannelsController.getGuild')
   // Cannot delete guild as information on blockchain is uncertainty
-}).prefix('api/discord')
+})
+  .prefix('api/discord')
+  .middleware('webhookAuth')
