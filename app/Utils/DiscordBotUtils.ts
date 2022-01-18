@@ -159,7 +159,7 @@ export async function fetchUsername(
     return
   }
 
-  let returnValue: undefined | GuildMember = undefined
+  let returnValue: undefined | GuildMember
 
   discordQuery.forEach((value) => {
     if (username === value.user.username && discriminator === value.user.discriminator) {
