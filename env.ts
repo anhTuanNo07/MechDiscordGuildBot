@@ -31,4 +31,7 @@ export default Env.rules({
   PG_USER: Env.schema.string(),
   PG_PASSWORD: Env.schema.string.optional(),
   PG_DB_NAME: Env.schema.string(),
+  // Contract configuration
+  NETWORK_URL: Env.schema.string(),
+  MECH_GUILD_CONTRACT: Env.schema.string(),
 })

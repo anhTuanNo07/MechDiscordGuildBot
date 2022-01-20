@@ -25,20 +25,29 @@ Route.get('/', async () => {
 })
 
 Route.group(() => {
-  Route.get('bot/login', 'DiscordBotsController.login')
-  // Check valid user
-  Route.get('check-valid-user/:id', 'DiscordBotsController.checkValidUser')
-  Route.get('check-valid-username/:username', 'DiscordBotsController.checkValidateUsername')
-  // Role CRUD
+  // --- Check valid user ---
+  // userInformation can be the username if pass with discriminator or userId
+  Route.get('verify/:userInformation/:discriminator?', 'DiscordBotsController.checkValidUser')
+
+  // --- Role CRUD ---
   Route.get('role/:id', 'DiscordBotsController.getRole')
-  Route.post('role/create', 'DiscordBotsController.createNewRole')
+  Route.post('role', 'DiscordBotsController.createNewRole')
   Route.patch('role/:id', 'DiscordBotsController.updateRole')
   Route.delete('role/:id', 'DiscordBotsController.deleteRole')
-  // Assign role for user
-  Route.post('user-role/create', 'DiscordBotsController.assignUserRole')
-  Route.delete('user-role/:userId', 'DiscordBotscontroller.removeUserRole')
-  // GuildMember
-  Route.patch('guild-member/update-guild/:id', 'GuildMembersController.updateGuildMember')
-  //GuildManager
-  Route.post('guild-channel-disable/:channelId', 'GuildMembersController.disableChannel')
-}).prefix('api/discord')
+
+  // --- Assign role for user ---
+  Route.post('user-role', 'GuildMembersController.assignUserRole')
+  Route.delete('user-role', 'GuildMembersController.removeUserRole')
+
+  // --- GuildMember ---
+  // special strong for assign master guild
+  Route.patch('user/:id', 'GuildMembersController.updateGuildMember')
+
+  // --- GuildManager ---
+  Route.post('guild', 'GuildChannelsController.createGuild')
+  Route.patch('guild/:guildId', 'GuildChannelsController.updateGuild')
+  Route.get('guild/:guildId', 'GuildChannelsController.getGuild')
+  // Cannot delete guild as information on blockchain is uncertainty
+})
+  .prefix('api/discord')
+  .middleware('webhookAuth')

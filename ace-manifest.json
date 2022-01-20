@@ -31,7 +31,7 @@
       },
       "commandPath": "./commands/CreateBatchRole",
       "commandName": "create:batch_role",
-      "description": "auto create batch role on discord",
+      "description": "auto create batch role on DISCORD",
       "args": [],
       "aliases": [],
       "flags": []
