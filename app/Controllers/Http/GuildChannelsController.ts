@@ -6,6 +6,7 @@ import {
 } from './../../Schema/GuildChannelValidator'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import GuildChannel from 'App/Models/GuildChannel'
+import { verifyCreateGuildSign } from 'App/Utils/BlockChainUtil'
 
 export default class GuildChannelsController {
   public async createGuild({ request, response }: HttpContextContract) {
@@ -21,6 +22,24 @@ export default class GuildChannelsController {
       response.methodNotAllowed({
         statusCode: 405,
         message: 'guild name exist',
+      })
+      return
+    }
+
+    // validate signature
+    const { sig, isPrivate, nonce, deadline, signer } = payload
+    const validateSign = verifyCreateGuildSign({
+      sig,
+      isPrivate,
+      nonce,
+      deadline,
+      signer,
+    })
+
+    if (!validateSign) {
+      response.unauthorized({
+        statusCode: 401,
+        message: 'not valid signature',
       })
       return
     }

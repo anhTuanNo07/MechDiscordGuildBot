@@ -14,6 +14,7 @@
       "Abis/*": ["./abis/*"],
       "Types/*": ["./types/*"]
     },
-    "types": ["@adonisjs/core", "@adonisjs/repl", "@adonisjs/lucid"]
+    "types": ["@adonisjs/core", "@adonisjs/repl", "@adonisjs/lucid"],
+    "resolveJsonModule": true
   }
 }

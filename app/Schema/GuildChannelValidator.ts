@@ -2,6 +2,11 @@ import { schema } from '@ioc:Adonis/Core/Validator'
 
 const createGuildForm = {
   guildName: schema.string(),
+  sig: schema.string.optional(),
+  isPrivate: schema.boolean.optional(),
+  nonce: schema.number.optional(),
+  deadline: schema.string.optional(),
+  signer: schema.string.optional(),
 }
 
 const updateGuildForm = {

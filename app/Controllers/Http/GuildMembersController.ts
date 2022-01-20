@@ -3,6 +3,7 @@ import User from 'App/Models/User'
 import RoleChannel from 'App/Models/RoleChannel'
 import { userRoleValidator } from 'App/Schema/UserRoleValidator'
 import { assignUserRoleOnDiscord, unassignUserRoleOnDiscord } from 'App/Utils/GuildMembersUtils'
+import { verifyJoinGuildSign } from 'App/Utils/BlockChainUtil'
 
 export default class GuildMembersController {
   // ------------------------------
@@ -40,6 +41,18 @@ export default class GuildMembersController {
     // validate user has had a certain role
     if (userRecord.roleId) {
       await unassignUserRoleOnDiscord(userId, roleId)
+    }
+
+    // validate signature
+    const { sig, guildId, nonce, deadline, signer } = payload
+    const validateSign = verifyJoinGuildSign({ sig, guildId, nonce, deadline, signer })
+
+    if (!validateSign) {
+      response.unauthorized({
+        statusCode: 401,
+        message: 'not valid signature',
+      })
+      return
     }
 
     try {

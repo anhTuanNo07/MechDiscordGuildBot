@@ -10,7 +10,7 @@ export const getMechaGuildContract = (): MechGuild =>
 
 export function verifyCreateGuildSign({ sig, isPrivate, nonce, deadline, signer }: any): boolean {
   const types = {
-    ClaimMechaReward: [
+    CreateGuildWithSig: [
       { name: 'isPrivate', type: 'bool' },
       { name: 'nonce', type: 'uint256' },
       { name: 'deadline', type: 'uint256' },
@@ -28,7 +28,7 @@ export function verifyCreateGuildSign({ sig, isPrivate, nonce, deadline, signer 
 
 export function verifyJoinGuildSign({ sig, guildId, nonce, deadline, signer }: any): boolean {
   const types = {
-    ClaimMechaReward: [
+    JoinGuildWithSig: [
       { name: 'guildId', type: 'uint256' },
       { name: 'nonce', type: 'uint256' },
       { name: 'deadline', type: 'uint256' },
@@ -46,8 +46,11 @@ export function verifyJoinGuildSign({ sig, guildId, nonce, deadline, signer }: a
 
 function verifySign({ types, message, sig, signer }: any): boolean {
   const domain = {
+    name: 'MechaGuild',
     version: '1',
+    verifyingContract: Env.get('MECH_GUILD_CONTRACT'),
   }
+
   try {
     const recoveredAddress = utils.verifyTypedData(domain, types, message, sig)
     return utils.getAddress(recoveredAddress) === utils.getAddress(signer)
