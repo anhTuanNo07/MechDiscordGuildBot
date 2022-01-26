@@ -51,3 +51,14 @@ Route.group(() => {
 })
   .prefix('api/discord')
   .middleware('webhookAuth')
+
+Route.group(() => {
+  // guild backend CRUD
+  Route.post('guild', 'GuildBackendsController.createGuild')
+  Route.patch('guild/:id', 'GuildBackendsController.updateGuild')
+  Route.get('guild/:id?', 'GuildBackendsController.getGuild')
+  // Cannot delete guild as information on blockchain is uncertainty
+
+  // guild member backend
+  Route.post('join', 'GuildBackendsController.joinGuild')
+}).prefix('api/backend')

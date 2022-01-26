@@ -34,4 +34,5 @@ export default Env.rules({
   // Contract configuration
   NETWORK_URL: Env.schema.string(),
   MECH_GUILD_CONTRACT: Env.schema.string(),
+  SIGNER_PRIVATE_KEY: Env.schema.string(),
 })
