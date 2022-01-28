@@ -11,6 +11,7 @@ export default class GuildBackends extends BaseSchema {
       table.string('guild_symbol').notNullable().unique()
       table.text('guild_description')
       table.boolean('access').notNullable()
+      table.string('region').notNullable()
       table.string('guild_master').notNullable().unique()
       table.text('members').notNullable()
       table.text('pending_members')

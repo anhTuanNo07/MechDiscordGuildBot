@@ -21,6 +21,9 @@ export default class GuildBackend extends BaseModel {
   public access: boolean
 
   @column()
+  public region: string
+
+  @column()
   public guildMaster: string
 
   @column()

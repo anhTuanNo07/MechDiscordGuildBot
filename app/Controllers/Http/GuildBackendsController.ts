@@ -1,3 +1,4 @@
+import Database from '@ioc:Adonis/Lucid/Database'
 import {
   signer,
   signCreateGuild,
@@ -9,6 +10,7 @@ import {
   updateGuildBackendValidator,
   guildSymbolValidator,
   joinGuildValidator,
+  guildHomeValidator,
 } from 'App/Schema/GuildBackendValidator'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import GuildBackend from 'App/Models/GuildBackend'
@@ -149,11 +151,27 @@ export default class GuildBackendsController {
       })
       return
     }
-    const guildRecords = await GuildBackend.all()
+    // validate filter information
+    const filterPayload = await request.validate({
+      schema: guildHomeValidator,
+      data: request.all(),
+    })
+
+    // query data
+    const guildTag = filterPayload.guildTag ? filterPayload.guildTag : ''
+    console.log(filterPayload)
+    const region = filterPayload.region ? filterPayload.region : ''
+
+    // query builder with filter for guildTag and region
+    const guildRecords = await Database.rawQuery(
+      `select * from guild_backends where lower(guild_tag) like :guildTag and lower(region) like :region`,
+      { guildTag: `%${guildTag.toLowerCase()}%`, region: `%${region.toLowerCase()}%` }
+    )
+
     response.ok({
       statusCode: 200,
       message: 'successfully',
-      data: guildRecords,
+      data: guildRecords.rows,
     })
   }
 

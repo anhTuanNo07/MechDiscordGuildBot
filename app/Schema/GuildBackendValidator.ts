@@ -5,6 +5,7 @@ const createGuildBackend = {
   guildTag: schema.string(),
   guildDescription: schema.string.nullableAndOptional(),
   access: schema.boolean(),
+  region: schema.string(),
   guildMaster: schema.string(),
   members: schema.string.nullableAndOptional(),
   pendingMembers: schema.string.nullableAndOptional(),
@@ -16,6 +17,7 @@ const updateGuildBackend = {
   guildTag: schema.string(),
   guildDescription: schema.string.nullableAndOptional(),
   access: schema.boolean(),
+  region: schema.string(),
   guildMaster: schema.string(),
 }
 
@@ -24,6 +26,11 @@ const guildSymbol = {
     size: '3mb',
     extnames: ['png'],
   }),
+}
+
+const guildHome = {
+  guildTag: schema.string.nullableAndOptional(),
+  region: schema.string.nullableAndOptional(),
 }
 
 const joinGuildBackend = {
@@ -38,3 +45,5 @@ export const updateGuildBackendValidator = schema.create(updateGuildBackend)
 export const guildSymbolValidator = schema.create(guildSymbol)
 
 export const joinGuildValidator = schema.create(joinGuildBackend)
+
+export const guildHomeValidator = schema.create(guildHome)
