@@ -38,6 +38,13 @@ const joinGuildBackend = {
   member: schema.string(),
 }
 
+const createMemberBackend = {
+  role: schema.string(),
+  address: schema.string(),
+  mechaOwn: schema.number(),
+  guildPoint: schema.string(),
+}
+
 export const guildBackendValidator = schema.create(createGuildBackend)
 
 export const updateGuildBackendValidator = schema.create(updateGuildBackend)
@@ -47,3 +54,5 @@ export const guildSymbolValidator = schema.create(guildSymbol)
 export const joinGuildValidator = schema.create(joinGuildBackend)
 
 export const guildHomeValidator = schema.create(guildHome)
+
+export const createMemberValidator = schema.create(createMemberBackend)

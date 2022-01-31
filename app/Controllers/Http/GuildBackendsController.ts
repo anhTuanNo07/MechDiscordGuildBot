@@ -11,9 +11,11 @@ import {
   guildSymbolValidator,
   joinGuildValidator,
   guildHomeValidator,
+  createMemberValidator,
 } from 'App/Schema/GuildBackendValidator'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import GuildBackend from 'App/Models/GuildBackend'
+import UserBackend from 'App/Models/UserBackend'
 // import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 export default class GuildBackendsController {
@@ -177,7 +179,7 @@ export default class GuildBackendsController {
 
   // --- End guild CRUD ---
 
-  // --- Guild members CRUD ---
+  // --- Guild members ---
   public async joinGuild({ request, response }: HttpContextContract) {
     // validate input data
     const payload = await request.validate({
@@ -204,5 +206,47 @@ export default class GuildBackendsController {
       message: 'sign join guild successfully',
       signature: signature,
     })
+  }
+
+  // CRUD
+  public async createMember({ request, response }: HttpContextContract) {
+    // validate input data
+    const payload = await request.validate({
+      schema: createMemberValidator,
+      data: request.body(),
+    })
+
+    try {
+      await UserBackend.create(payload)
+    } catch (error) {
+      response.internalServerError({
+        statusCode: 500,
+        message: 'create member faileds',
+      })
+      return
+    }
+
+    response.ok({
+      statusCode: 200,
+      message: 'create member successfully',
+    })
+  }
+
+  public async updateMember({ request, response }: HttpContextContract) {
+    // validate input data
+    const payload = await request.validate({
+      schema: createMemberValidator,
+      data: request.body(),
+    })
+
+    const id = request.param('id')
+    const userRecord = await UserBackend.findBy('id', id)
+    if (!userRecord) {
+      response.notFound({
+        statusCode: 404,
+        message: 'user unknown',
+      })
+      return
+    }
   }
 }

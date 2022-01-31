@@ -53,12 +53,19 @@ Route.group(() => {
   .middleware('webhookAuth')
 
 Route.group(() => {
-  // guild backend CRUD
+  // --- guild backend CRUD ---
   Route.post('guild', 'GuildBackendsController.createGuild')
   Route.patch('guild/:id', 'GuildBackendsController.updateGuild')
   Route.get('guild/:id?', 'GuildBackendsController.getGuild')
   // Cannot delete guild as information on blockchain is uncertainty
 
-  // guild member backend
+  // --- guild member backend ---
+
+  // sign member join guild
   Route.post('join', 'GuildBackendsController.joinGuild')
+  // member CRUD
+  Route.post('member', 'GuildBackendsController.createMember')
+  Route.patch('member/:id', 'GuildBackendsController.updateMember')
+  Route.get('member/:id?', 'GuildBackendsController.getMembers')
+  // no need to have delete member
 }).prefix('api/backend')
