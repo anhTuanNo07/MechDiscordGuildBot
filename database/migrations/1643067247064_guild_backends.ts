@@ -15,6 +15,10 @@ export default class GuildBackends extends BaseSchema {
       table.string('guild_master').notNullable().unique()
       table.text('members').notNullable()
       table.text('pending_members')
+      table.integer('guild_hall_level').notNullable()
+      table.string('guild_hall_material').notNullable()
+      table.integer('guild_nitro_level').notNullable()
+      table.string('guild_nitro_material').notNullable()
 
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL

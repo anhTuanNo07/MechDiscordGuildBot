@@ -32,6 +32,18 @@ export default class GuildBackend extends BaseModel {
   @column()
   public pendingMembers: string | null
 
+  @column()
+  public guildHallLevel: number
+
+  @column()
+  public guildHallMaterial: string
+
+  @column()
+  public guildNitroLevel: number
+
+  @column()
+  public guildNitroMaterial: string
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

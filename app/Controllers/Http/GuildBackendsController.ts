@@ -65,6 +65,10 @@ export default class GuildBackendsController {
       access: payload.access,
       guildMaster: payload.guildMaster,
       members: payload.guildMaster,
+      guildHallLevel: 1,
+      guildHallMaterial: '0',
+      guildNitroLevel: 1,
+      guildNitroMaterial: '0',
     }
 
     await GuildBackend.create(data)
@@ -99,22 +103,21 @@ export default class GuildBackendsController {
       return
     } else {
       try {
-        guildRecord.guildName = payload.guildName
-        guildRecord.guildTag = payload.guildTag
-        guildRecord.guildDescription = payload.guildDescription ? payload.guildDescription : ''
-        guildRecord.guildMaster = payload.guildMaster
-        guildRecord.access = payload.access
         // update members
         const guildContract = getMechGuildContract()
         const guildId = (await guildContract.users(payload.guildMaster)).guildId.toString()
         const updateMembers = (await guildContract.getMemberOfGuild(guildId)).toString()
-        guildRecord.members = updateMembers
 
         // update pending members
         const pendingMembers = (await guildContract.getPendingMemberOfGuild(guildId)).toString()
-        guildRecord.pendingMembers = pendingMembers
 
-        await guildRecord.save()
+        const updateData = {
+          members: updateMembers,
+          pendingMembers,
+          ...payload,
+        }
+
+        await guildRecord.merge(updateData).save()
       } catch {
         response.badRequest({
           statusCode: 400,
