@@ -25,9 +25,11 @@ Route.get('/', async () => {
 })
 
 Route.group(() => {
+  // --- Discord User CRUD ---
   // --- Check valid user ---
-  // userInformation can be the username if pass with discriminator or userId
-  Route.get('verify/:userInformation/:discriminator?', 'DiscordBotsController.checkValidUser')
+  // userInformation can be the username if pass with discriminator or userId, verify or UPDATE discord user information
+  Route.post('verify', 'DiscordBotsController.checkValidUser')
+  Route.get('user/:id?', 'DiscordBotsController.getUser')
 
   // --- Role CRUD ---
   Route.get('role/:id', 'DiscordBotsController.getRole')
@@ -40,8 +42,7 @@ Route.group(() => {
   Route.delete('user-role', 'GuildMembersController.removeUserRole')
 
   // --- GuildMember ---
-  // special strong for assign master guild
-  Route.patch('user/:id', 'GuildMembersController.updateGuildMember')
+  // Route.patch('user/:id', 'GuildMembersController.updateGuildMember')
 
   // --- GuildManager ---
   Route.post('guild', 'GuildChannelsController.createGuild')
@@ -68,4 +69,6 @@ Route.group(() => {
   Route.patch('member/:id', 'GuildBackendsController.updateMember')
   Route.get('member/:id?', 'GuildBackendsController.getMembers')
   // no need to have delete member
-}).prefix('api/backend')
+})
+  .prefix('api/backend')
+  .middleware('backendAuth')

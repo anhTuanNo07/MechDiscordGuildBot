@@ -12,10 +12,25 @@ export default class UserBackend extends BaseModel {
   public address: string
 
   @column()
+  public discord: string | null
+
+  @column()
   public mechaOwn: number
 
   @column()
+  public distance: string
+
+  @column()
+  public contribution: string
+
+  @column()
   public guildPoint: string
+
+  @column()
+  public guildMaterials: string
+
+  @column()
+  public nitro: string
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

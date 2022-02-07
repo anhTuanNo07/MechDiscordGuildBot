@@ -1,5 +1,10 @@
 import { schema } from '@ioc:Adonis/Core/Validator'
 
+const getUserDiscord = {
+  username: schema.string.nullableAndOptional(),
+  userId: schema.string.nullableAndOptional(),
+}
+
 export const verifyUserRequest = schema.create({
   userInformation: schema.string(),
   discriminator: schema.string.optional(),
@@ -22,3 +27,5 @@ export const roleDataValidator = schema.create({
 export const roleIdValidator = schema.create({
   id: schema.string(),
 })
+
+export const getUserDiscordValidator = schema.create(getUserDiscord)

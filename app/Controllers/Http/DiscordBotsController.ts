@@ -3,7 +3,11 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { GuildMember } from 'discord.js'
 import User from 'App/Models/User'
 import RoleChannel from 'App/Models/RoleChannel'
-import { roleDataValidator, verifyUserRequest } from 'App/Schema/DiscordBotRequestValidator'
+import {
+  roleDataValidator,
+  verifyUserRequest,
+  getUserDiscordValidator,
+} from 'App/Schema/DiscordBotRequestValidator'
 import {
   autoLogin,
   fetchRoleData,
@@ -12,6 +16,7 @@ import {
   fetchUsername,
   getGuild,
 } from 'App/Utils/DiscordBotUtils'
+import Database from '@ioc:Adonis/Lucid/Database'
 
 export default class DiscordBotsController {
   // --- Validate user ---
@@ -19,7 +24,7 @@ export default class DiscordBotsController {
     // validate input data
     const payload = await request.validate({
       schema: verifyUserRequest,
-      data: request.params(),
+      data: request.body(),
     })
 
     // validate request ok
@@ -79,11 +84,18 @@ export default class DiscordBotsController {
 
     // check user information and save if not in database
     try {
-      await User.firstOrCreate(data)
-      // user validation successfully
+      // check exist on database
+      const userRecord = await User.findBy('user_id', data.userId)
+      if (userRecord) {
+        await userRecord.merge(data).save()
+      } else {
+        await User.create(data)
+      }
+
+      // user validation or update successfully
       response.ok({
         statusCode: 200,
-        message: 'valid user',
+        message: 'validation or update successfully',
         data: data,
       })
     } catch {
@@ -92,6 +104,49 @@ export default class DiscordBotsController {
         message: 'create or find user failed',
       })
     }
+  }
+
+  public async getUser({ request, response }: HttpContextContract) {
+    const id = request.param('id')
+    if (id) {
+      const userRecord = await User.findBy('id', id)
+      if (!userRecord) {
+        response.notFound({
+          statusCode: 404,
+          message: 'user unknown',
+        })
+        return
+      }
+      response.ok({
+        statusCode: 200,
+        message: 'successfully',
+        data: userRecord,
+      })
+      return
+    }
+
+    // validate filter information
+    const filterPayload = await request.validate({
+      schema: getUserDiscordValidator,
+      data: request.all(),
+    })
+
+    // query data
+    const username = filterPayload.username ? filterPayload.username : ''
+    console.log(filterPayload)
+    const userId = filterPayload.userId ? filterPayload.userId : ''
+
+    // query builder with filter for guildTag and region
+    const guildRecords = await Database.rawQuery(
+      `select * from user where lower(username) like :username and lower(user_id) like :userId`,
+      { username: `%${username.toLowerCase()}%`, userId: `%${userId.toLowerCase()}%` }
+    )
+
+    response.ok({
+      statusCode: 200,
+      message: 'successfully',
+      data: guildRecords.rows,
+    })
   }
 
   // ------------------------------

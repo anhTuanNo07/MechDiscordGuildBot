@@ -12,6 +12,7 @@ import {
   joinGuildValidator,
   guildHomeValidator,
   createMemberValidator,
+  getUserBackendValidator,
 } from 'App/Schema/GuildBackendValidator'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import GuildBackend from 'App/Models/GuildBackend'
@@ -106,7 +107,7 @@ export default class GuildBackendsController {
         // update members
         const guildContract = getMechGuildContract()
         const guildId = (await guildContract.users(payload.guildMaster)).guildId.toString()
-        const updateMembers = (await guildContract.getMembersOfGuild(guildId)).toString()
+        const updateMembers = (await guildContract.getMemberOfGuild(guildId)).toString()
         guildRecord.members = updateMembers
 
         // update pending members
@@ -248,5 +249,54 @@ export default class GuildBackendsController {
       })
       return
     }
+    await userRecord.merge(payload).save()
+
+    response.ok({
+      statusCode: 200,
+      message: 'update user successfully',
+    })
+  }
+
+  public async getMember({ request, response }: HttpContextContract) {
+    const id = request.param('id')
+    if (id) {
+      const userRecord = await UserBackend.findBy('id', id)
+      if (!userRecord) {
+        response.notFound({
+          statusCode: 404,
+          message: 'user unknown',
+        })
+        return
+      }
+      response.ok({
+        statusCode: 200,
+        message: 'successfully',
+        data: userRecord,
+      })
+      return
+    }
+
+    // validate filter information
+    const filterPayload = await request.validate({
+      schema: getUserBackendValidator,
+      data: request.all(),
+    })
+
+    // query data
+    const address = filterPayload.address ? filterPayload.address : ''
+    console.log(filterPayload)
+    const discord = filterPayload.discord ? filterPayload.discord : ''
+
+    // query builder with filter for guildTag and region
+    const guildRecords = await Database.rawQuery(
+      `select * from user_backends where lower(address) like :address and lower(discord) like :discord`,
+      { address: `%${address.toLowerCase()}%`, discord: `%${discord.toLowerCase()}%` }
+    )
+
+    response.ok({
+      statusCode: 200,
+      message: 'successfully',
+      data: guildRecords.rows,
+    })
   }
 }
