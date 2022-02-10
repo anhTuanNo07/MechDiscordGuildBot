@@ -21,7 +21,6 @@ const updateGuildBackend = {
   guildMaster: schema.string(),
   guildHallLevel: schema.number(),
   guildHallMaterial: schema.string(),
-  guildNitroLevel: schema.number(),
   guildNitroMaterial: schema.string(),
 }
 

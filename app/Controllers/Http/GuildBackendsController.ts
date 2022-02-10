@@ -67,7 +67,6 @@ export default class GuildBackendsController {
       members: payload.guildMaster,
       guildHallLevel: 1,
       guildHallMaterial: '0',
-      guildNitroLevel: 1,
       guildNitroMaterial: '0',
     }
 
@@ -260,7 +259,7 @@ export default class GuildBackendsController {
     })
   }
 
-  public async getMember({ request, response }: HttpContextContract) {
+  public async getMembers({ request, response }: HttpContextContract) {
     const id = request.param('id')
     if (id) {
       const userRecord = await UserBackend.findBy('id', id)

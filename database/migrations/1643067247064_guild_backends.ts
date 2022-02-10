@@ -17,7 +17,6 @@ export default class GuildBackends extends BaseSchema {
       table.text('pending_members')
       table.integer('guild_hall_level').notNullable()
       table.string('guild_hall_material').notNullable()
-      table.integer('guild_nitro_level').notNullable()
       table.string('guild_nitro_material').notNullable()
 
       /**

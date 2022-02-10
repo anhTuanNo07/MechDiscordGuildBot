@@ -20,16 +20,11 @@
 
 import Route from '@ioc:Adonis/Core/Route'
 
-Route.get('/', async () => {
-  return { hello: 'world' }
-})
-
 Route.group(() => {
   // --- Discord User CRUD ---
   // --- Check valid user ---
   // userInformation can be the username if pass with discriminator or userId, verify or UPDATE discord user information
   Route.post('verify', 'DiscordBotsController.checkValidUser')
-  Route.get('user/:id?', 'DiscordBotsController.getUser')
 
   // --- Role CRUD ---
   Route.get('role/:id', 'DiscordBotsController.getRole')
