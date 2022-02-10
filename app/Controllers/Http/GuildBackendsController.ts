@@ -1,3 +1,4 @@
+import { autoLogin, getGuild } from 'App/Utils/DiscordBotUtils'
 import Database from '@ioc:Adonis/Lucid/Database'
 import {
   signer,
@@ -14,11 +15,11 @@ import {
   createMemberValidator,
   getUserBackendValidator,
 } from 'App/Schema/GuildBackendValidator'
+import GuildChannel from 'App/Models/GuildChannel'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import GuildBackend from 'App/Models/GuildBackend'
 import UserBackend from 'App/Models/UserBackend'
-// import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-
+import RoleChannel from 'App/Models/RoleChannel'
 export default class GuildBackendsController {
   // --- Guild CRUD ---
   public async createGuild({ request, response }: HttpContextContract) {
@@ -49,12 +50,18 @@ export default class GuildBackendsController {
       return
     }
 
-    // save guild symbol
+    // Create role for discord
+    const roleData = {
+      roleName: payload.guildName,
+      generatedRole: false,
+    }
 
-    // change filename to guildName
-    await imageFile.guildSymbol.moveToDisk('images', {
-      name: `${payload.guildName}.png`,
-    })
+    // Create Channel for discord
+    const guildData = {
+      guildName: payload.guildName,
+      generatedChannel: false,
+      needUpdate: false,
+    }
 
     // save backend information
     const data = {
@@ -70,13 +77,20 @@ export default class GuildBackendsController {
       guildNitroMaterial: '0',
     }
 
+    await RoleChannel.create(roleData)
+    await GuildChannel.create(guildData)
     await GuildBackend.create(data)
+
+    // change filename to guildName and save
+    await imageFile.guildSymbol.moveToDisk('images', {
+      name: `${payload.guildName}.png`,
+    })
 
     // return data
     response.ok({
       statusCode: 200,
       message: 'sign create guild successfully',
-      signature: signature,
+      data: signature,
     })
   }
 
@@ -93,7 +107,11 @@ export default class GuildBackendsController {
     })
 
     // update off-chain info
-    const guildRecord = await GuildBackend.findBy('id', payload.id)
+    let guildRecord = await GuildBackend.findBy('guild_name', payload.guildName)
+    if (!guildRecord) {
+      guildRecord = await GuildBackend.findBy('guild_id', payload.guildId)
+    }
+
     if (!guildRecord) {
       response.notFound({
         statusCode: 404,
@@ -101,6 +119,7 @@ export default class GuildBackendsController {
       })
       return
     } else {
+      const roleRecord = await RoleChannel.findBy('role_name', guildRecord.guildName)
       try {
         // update members
         const guildContract = getMechGuildContract()
@@ -116,6 +135,52 @@ export default class GuildBackendsController {
           ...payload,
         }
 
+        // update role name on discord server
+        if (roleRecord?.generatedRole && roleRecord.roleName !== payload.guildName) {
+          const client = await autoLogin()
+          const guild = await getGuild(client)
+          const roleId = roleRecord.roleId ? roleRecord.roleId : ''
+          try {
+            await guild?.roles.edit(roleId, { name: payload.guildName })
+          } catch (error) {
+            response.badRequest({
+              statusCode: 400,
+              message: error.message,
+            })
+          }
+        }
+
+        // update channel name on discord server
+        const guildChannelRecord = await GuildChannel.findBy('guild_name', guildRecord.guildName)
+        if (
+          guildChannelRecord?.generatedChannel &&
+          guildChannelRecord.guildName !== payload.guildName
+        ) {
+          const client = await autoLogin()
+          const guild = await getGuild(client)
+          const guildId = guildChannelRecord.guildId ? guildChannelRecord.guildId : ''
+          try {
+            const channel = await guild?.channels.cache.get(guildId)
+            await channel?.edit({ name: payload.guildName })
+          } catch (error) {
+            response.badRequest({
+              statusCode: 400,
+              message: error.message,
+            })
+          }
+        }
+
+        // update for role channel and guild channel
+        const roleUpdateData = {
+          roleName: payload.guildName,
+        }
+        const guildUpdateData = {
+          guildName: payload.guildName,
+        }
+
+        // update all data in backend
+        await roleRecord?.merge(roleUpdateData).save()
+        await guildChannelRecord?.merge(guildUpdateData).save()
         await guildRecord.merge(updateData).save()
       } catch {
         response.badRequest({
@@ -207,7 +272,7 @@ export default class GuildBackendsController {
     response.ok({
       statusCode: 200,
       message: 'sign join guild successfully',
-      signature: signature,
+      data: signature,
     })
   }
 

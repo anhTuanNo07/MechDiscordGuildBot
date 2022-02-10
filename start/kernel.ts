@@ -40,5 +40,4 @@ Server.middleware.register([() => import('@ioc:Adonis/Core/BodyParser')])
 */
 Server.middleware.registerNamed({
   webhookAuth: () => import('App/Middleware/WebhookAuth'),
-  backendAuth: () => import('App/Middleware/BackendAuth'),
 })

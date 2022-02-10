@@ -153,53 +153,6 @@ export default class DiscordBotsController {
   // --- Handle about role ---
   // ------------------------------
 
-  public async createNewRole({ request, response }: HttpContextContract) {
-    // Input validation
-    const payload = await request.validate({
-      schema: roleDataValidator,
-      data: request.body(),
-    })
-    // check exist role
-    const roleName = payload.name
-    const roleRecord = await RoleChannel.findBy('role_name', roleName)
-    if (roleRecord) {
-      response.methodNotAllowed({
-        statusCode: 405,
-        message: 'role have existed',
-      })
-      return
-    }
-
-    // fetch data for correct type of discord role
-    const roleDataResponse = fetchRoleData(payload)
-
-    const client = await autoLogin()
-    const guild = await getGuild(client)
-
-    await guild?.roles
-      .create(roleDataResponse)
-      .then(async (role) => {
-        const data = fetchRoleResponse(role)
-        await RoleChannel.create({
-          roleName: role.name,
-          roleId: role.id,
-          generatedRole: true,
-        })
-        response.ok({
-          statusCode: 200,
-          message: 'create role successfully',
-          data: data,
-        })
-      })
-      .catch((error) => {
-        // Error just about input type of role as its very strict
-        response.badRequest({
-          statusCode: 400,
-          message: error.message,
-        })
-      })
-  }
-
   public async updateRole({ request, response }: HttpContextContract) {
     // Input validation
     const payload = await request.validate({

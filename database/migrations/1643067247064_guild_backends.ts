@@ -6,6 +6,7 @@ export default class GuildBackends extends BaseSchema {
   public async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
+      table.integer('guild_id').unique()
       table.text('guild_name').notNullable().unique()
       table.string('guild_tag').notNullable()
       table.string('guild_symbol').notNullable().unique()
@@ -14,10 +15,6 @@ export default class GuildBackends extends BaseSchema {
       table.string('region').notNullable()
       table.string('guild_master').notNullable().unique()
       table.text('members').notNullable()
-      table.text('pending_members')
-      table.integer('guild_hall_level').notNullable()
-      table.string('guild_hall_material').notNullable()
-      table.string('guild_nitro_material').notNullable()
 
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL

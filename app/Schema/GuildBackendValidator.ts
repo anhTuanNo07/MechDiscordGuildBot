@@ -8,20 +8,16 @@ const createGuildBackend = {
   region: schema.string(),
   guildMaster: schema.string(),
   members: schema.string.nullableAndOptional(),
-  pendingMembers: schema.string.nullableAndOptional(),
 }
 
 const updateGuildBackend = {
-  id: schema.number(),
+  guildId: schema.number(),
   guildName: schema.string(),
   guildTag: schema.string(),
   guildDescription: schema.string.nullableAndOptional(),
   access: schema.boolean(),
   region: schema.string(),
   guildMaster: schema.string(),
-  guildHallLevel: schema.number(),
-  guildHallMaterial: schema.string(),
-  guildNitroMaterial: schema.string(),
 }
 
 const guildSymbol = {
