@@ -22,7 +22,6 @@ export default Env.rules({
   DRIVE_DISK: Env.schema.enum(['local'] as const),
   NODE_ENV: Env.schema.enum(['development', 'production', 'testing'] as const),
   // Discord environment
-  EVERYONE_ROLE: Env.schema.string(),
   BOT_TOKEN: Env.schema.string(),
   SERVER_ID: Env.schema.string(),
   // DB
@@ -33,7 +32,6 @@ export default Env.rules({
   PG_DB_NAME: Env.schema.string(),
   // Authorization
   WEBHOOK_API_TOKEN: Env.schema.string(),
-  BACKEND_API_TOKEN: Env.schema.string(),
   // Contract configuration
   NETWORK_URL: Env.schema.string(),
   MECH_GUILD_CONTRACT: Env.schema.string(),

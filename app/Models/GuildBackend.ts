@@ -27,6 +27,9 @@ export default class GuildBackend extends BaseModel {
   public guildMaster: string
 
   @column()
+  public nonce: string | null
+
+  @column()
   public members: string
 
   @column.dateTime({ autoCreate: true })

@@ -15,22 +15,25 @@ export default class UserBackend extends BaseModel {
   public discord: string | null
 
   @column()
-  public mechaOwn: number
+  public mechaOwn: number | null
 
   @column()
-  public distance: string
+  public distance: string | null
 
   @column()
-  public contribution: string
+  public contribution: string | null
 
   @column()
-  public guildPoint: string
+  public guildPoint: string | null
 
   @column()
-  public guildMaterials: string
+  public guildMaterials: string | null
 
   @column()
-  public nitro: string
+  public nitro: string | null
+
+  @column()
+  public valid: boolean
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

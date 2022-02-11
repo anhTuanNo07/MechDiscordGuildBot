@@ -40,13 +40,13 @@ const joinGuildBackend = {
 const createMemberBackend = {
   role: schema.string(),
   address: schema.string(),
-  discord: schema.string.nullableAndOptional(),
-  mechaOwn: schema.number(),
-  distance: schema.string(),
-  contribution: schema.string(),
-  guildPoint: schema.string(),
-  guildMaterials: schema.string(),
-  nitro: schema.string(),
+  discord: schema.string.nullable(),
+  mechaOwn: schema.number.nullable(),
+  distance: schema.string.nullable(),
+  contribution: schema.string.nullable(),
+  guildPoint: schema.string.nullable(),
+  guildMaterials: schema.string.nullable(),
+  nitro: schema.string.nullable(),
 }
 
 const getUserBackend = {

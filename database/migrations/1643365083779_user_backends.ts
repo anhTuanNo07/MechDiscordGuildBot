@@ -9,12 +9,13 @@ export default class UserBackends extends BaseSchema {
       table.string('role').notNullable()
       table.string('address').notNullable().index()
       table.string('discord')
-      table.integer('mecha_own').notNullable()
-      table.string('distance').notNullable()
-      table.string('contribution').notNullable()
-      table.string('guild_point').notNullable()
-      table.string('guild_materials').notNullable()
-      table.string('nitro').notNullable()
+      table.integer('mecha_own')
+      table.string('distance')
+      table.string('contribution')
+      table.string('guild_point')
+      table.string('guild_materials')
+      table.string('nitro')
+      table.boolean('valid').notNullable()
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
        */

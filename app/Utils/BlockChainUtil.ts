@@ -65,6 +65,11 @@ function verifySign({ types, message, sig, signer }: any): boolean {
   }
 }
 
+export async function getNonce(creator: string): Promise<string> {
+  const guild = getMechGuildContract()
+  return await (await guild.createGuildSigNonces(creator)).toString()
+}
+
 // create signature
 export function signCreateGuild(creator: string, isPrivate: boolean, backend: any) {
   return new Promise<EIP712Sig>(async (res, reject) => {

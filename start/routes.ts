@@ -21,13 +21,24 @@
 import Route from '@ioc:Adonis/Core/Route'
 
 Route.group(() => {
+  // --- guild webhook ---
+  Route.patch('guild/:id', 'GuildBackendsController.updateGuildEvent')
+  // Cannot delete guild as information on blockchain is uncertainty
+
+  // --- member webhook ---
+  Route.post('member', 'GuildBackendsController.createMember')
+  // no need to have delete member
+})
+  .prefix('api/webhook')
+  .middleware('webhookAuth')
+
+Route.group(() => {
   Route.post('verify', 'DiscordBotsController.checkValidUser')
   // --- guild backend CRUD ---
   Route.post('guild', 'GuildBackendsController.createGuild')
-  Route.patch('guild/:id', 'GuildBackendsController.updateGuild')
+  Route.patch('guild/:id', 'GuildBackendsController.updateGuildBackend')
   Route.get('guild/:id?', 'GuildBackendsController.getGuild')
   // Cannot delete guild as information on blockchain is uncertainty
-
   // --- guild member backend ---
 
   // sign member join guild
@@ -37,6 +48,4 @@ Route.group(() => {
   Route.patch('member/:id', 'GuildBackendsController.updateMember')
   Route.get('member/:id?', 'GuildBackendsController.getMembers')
   // no need to have delete member
-})
-  .prefix('api/backend')
-  .middleware('webhookAuth')
+}).prefix('api/backend')

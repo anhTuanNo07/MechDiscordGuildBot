@@ -5,6 +5,7 @@ import {
   signCreateGuild,
   signJoinGuild,
   getMechGuildContract,
+  getNonce,
 } from 'App/Utils/BlockChainUtil'
 import {
   guildBackendValidator,
@@ -72,9 +73,7 @@ export default class GuildBackendsController {
       access: payload.access,
       guildMaster: payload.guildMaster,
       members: payload.guildMaster,
-      guildHallLevel: 1,
-      guildHallMaterial: '0',
-      guildNitroMaterial: '0',
+      nonce: await getNonce(payload.guildMaster),
     }
 
     await RoleChannel.create(roleData)
