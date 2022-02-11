@@ -47,13 +47,10 @@ export default class GuildChannelsController {
     try {
       const guildRecord = await GuildChannel.create({
         guildName: payload.guildName,
-        generatedChannel: false,
-        needUpdate: false,
       })
 
       await RoleChannel.create({
         roleName: payload.guildName,
-        generatedRole: false,
       })
 
       response.ok({
@@ -95,7 +92,6 @@ export default class GuildChannelsController {
       }
 
       guildRecord.guildName = payload.guildName
-      guildRecord.needUpdate = true
       await guildRecord.save()
       response.ok({
         statusCode: 200,

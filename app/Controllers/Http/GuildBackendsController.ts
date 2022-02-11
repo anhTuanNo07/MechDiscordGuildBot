@@ -1,4 +1,9 @@
-import { changeChannelName, changeRoleName } from 'App/Utils/DiscordBotUtils'
+import {
+  changeChannelName,
+  changeRoleName,
+  createChannel,
+  createRole,
+} from 'App/Utils/DiscordBotUtils'
 import Database from '@ioc:Adonis/Lucid/Database'
 import {
   signer,
@@ -106,7 +111,11 @@ export default class GuildBackendsController {
         .andWhere('nonce', nonce)
         .first()
       await guildRecord?.merge(payload).save()
+
+      // INTERACT WITH DISCORD SERVER
       // create channel and role
+      const roleId = await createRole(payload.guildName)
+      await createChannel(payload.guildName, roleId)
     } catch {
       response.internalServerError({
         statusCode: 500,
@@ -143,19 +152,18 @@ export default class GuildBackendsController {
       })
       return
     } else {
-      const roleRecord = await RoleChannel.findBy('role_name', guildRecord.guildName)
       try {
         // update members
         const guildContract = getMechGuildContract()
         const guildId = payload.guildId
         const updateMembers = (await guildContract.getMemberOfGuild(guildId)).toString()
-
         const updateData = {
           members: updateMembers,
           ...payload,
         }
 
         // update role name on discord server and backend information
+        const roleRecord = await RoleChannel.findBy('role_name', guildRecord.guildName)
         if (roleRecord && roleRecord.roleName !== payload.guildName) {
           const roleId = roleRecord.roleId ? roleRecord.roleId : ''
           await changeRoleName(roleId, payload.guildName)

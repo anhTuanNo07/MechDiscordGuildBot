@@ -11,12 +11,6 @@ export default class GuildChannel extends BaseModel {
   @column()
   public guildId: string | null
 
-  @column()
-  public generatedChannel: boolean
-
-  @column()
-  public needUpdate: boolean
-
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 
