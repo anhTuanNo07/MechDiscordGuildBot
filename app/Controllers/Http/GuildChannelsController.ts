@@ -47,19 +47,6 @@ export default class GuildBackendsController {
       return
     }
 
-    // Create role for discord
-    const roleData = {
-      roleName: payload.guildName,
-      generatedRole: false,
-    }
-
-    // Create Channel for discord
-    const guildData = {
-      guildName: payload.guildName,
-      generatedChannel: false,
-      needUpdate: false,
-    }
-
     // save backend information
     const data = {
       guildName: payload.guildName,
@@ -71,9 +58,7 @@ export default class GuildBackendsController {
       members: payload.guildMaster,
       nonce: await getNonce(payload.guildMaster),
     }
-
-    // save information
-    await this.finalCreateGuild(roleData, guildData, data)
+    await GuildBackend.create(data)
 
     // change filename to guildName and save
     await imageFile.guildSymbol.moveToDisk('images', {
@@ -105,6 +90,8 @@ export default class GuildBackendsController {
           .first()
         await guildRecord?.merge(payload).save()
         guildName = guildRecord?.guildName
+        await RoleChannel.create({ roleName: guildName })
+        await GuildChannel.create({ guildName: guildName })
       } else {
         const guildRecord = await GuildBackend.query().where('guild_id', payload.guildId).first()
         await guildRecord?.merge(payload).save()
@@ -259,11 +246,4 @@ export default class GuildBackendsController {
   }
 
   // --- End guild CRUD ---
-
-  // internal function
-  private async finalCreateGuild(roleChannel, guildChannel, guildBackend) {
-    await RoleChannel.create(roleChannel)
-    await GuildChannel.create(guildChannel)
-    await GuildBackend.create(guildBackend)
-  }
 }
