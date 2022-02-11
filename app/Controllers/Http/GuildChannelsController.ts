@@ -1,131 +1,269 @@
-import RoleChannel from 'App/Models/RoleChannel'
+import { updateGuildEventValidator } from './../../Schema/GuildBackendValidator'
 import {
-  getGuildValidator,
-  guildValidator,
-  updateGuildValidator,
-} from './../../Schema/GuildChannelValidator'
-import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+  changeChannelName,
+  changeRoleName,
+  createChannel,
+  createRole,
+} from 'App/Utils/DiscordBotUtils'
+import Database from '@ioc:Adonis/Lucid/Database'
+import { signer, signCreateGuild, getMechGuildContract, getNonce } from 'App/Utils/BlockChainUtil'
+import {
+  guildBackendValidator,
+  updateGuildBackendValidator,
+  guildSymbolValidator,
+  guildHomeValidator,
+} from 'App/Schema/GuildBackendValidator'
 import GuildChannel from 'App/Models/GuildChannel'
-import { verifyCreateGuildSign } from 'App/Utils/BlockChainUtil'
-
-export default class GuildChannelsController {
+import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import GuildBackend from 'App/Models/GuildBackend'
+import RoleChannel from 'App/Models/RoleChannel'
+export default class GuildBackendsController {
+  // --- Guild CRUD ---
   public async createGuild({ request, response }: HttpContextContract) {
     // validate input data
     const payload = await request.validate({
-      schema: guildValidator,
+      schema: guildBackendValidator,
       data: request.body(),
     })
 
-    // check guild exist
-    const guildRecord = await GuildChannel.findBy('guild_name', payload.guildName)
-    if (guildRecord) {
-      response.methodNotAllowed({
-        statusCode: 405,
-        message: 'guild name exist',
-      })
-      return
-    }
-
-    // validate signature
-    const { sig, isPrivate, nonce, deadline, signer } = payload
-    const validateSign = verifyCreateGuildSign({
-      sig,
-      isPrivate,
-      nonce,
-      deadline,
-      signer,
+    const imageFile = await request.validate({
+      schema: guildSymbolValidator,
+      data: request.allFiles(),
     })
 
-    if (!validateSign) {
-      response.unauthorized({
-        statusCode: 401,
-        message: 'not valid signature',
+    let signature
+
+    // create guild
+    try {
+      const Signer = signer
+      signature = await signCreateGuild(payload.guildMaster, payload.access, Signer)
+
+      //   create guild in backend if sign successfully, update info if create guild on-chain failed
+    } catch (error) {
+      response.internalServerError({
+        statusCode: 500,
+        message: 'create guild transaction or sign error',
       })
       return
     }
 
+    // Create role for discord
+    const roleData = {
+      roleName: payload.guildName,
+      generatedRole: false,
+    }
+
+    // Create Channel for discord
+    const guildData = {
+      guildName: payload.guildName,
+      generatedChannel: false,
+      needUpdate: false,
+    }
+
+    // save backend information
+    const data = {
+      guildName: payload.guildName,
+      guildTag: payload.guildTag,
+      guildSymbol: `./tmp/uploads/images/${payload.guildName}.png`,
+      guildDescription: payload.guildDescription,
+      access: payload.access,
+      guildMaster: payload.guildMaster,
+      members: payload.guildMaster,
+      nonce: await getNonce(payload.guildMaster),
+    }
+
+    // save information
+    await this.finalCreateGuild(roleData, guildData, data)
+
+    // change filename to guildName and save
+    await imageFile.guildSymbol.moveToDisk('images', {
+      name: `${payload.guildName}.png`,
+    })
+
+    // return data
+    response.ok({
+      statusCode: 200,
+      message: 'sign create guild successfully',
+      data: signature,
+    })
+  }
+
+  public async updateGuildEvent({ request, response }: HttpContextContract) {
+    // validate input data
+    const payload = await request.validate({
+      schema: updateGuildEventValidator,
+      data: request.body(),
+    })
+
     try {
-      const guildRecord = await GuildChannel.create({
-        guildName: payload.guildName,
-      })
+      let guildName
+      if (payload.nonce) {
+        const nonce = payload.nonce
+        const guildRecord = await GuildBackend.query()
+          .where('guild_master', payload.guildMaster)
+          .andWhere('nonce', nonce)
+          .first()
+        await guildRecord?.merge(payload).save()
+        guildName = guildRecord?.guildName
+      } else {
+        const guildRecord = await GuildBackend.query().where('guild_id', payload.guildId).first()
+        await guildRecord?.merge(payload).save()
+        guildName = guildRecord?.guildName
+      }
+      const nonce = payload.nonce ? payload.nonce : ''
+      const guildRecord = await GuildBackend.query()
+        .where('guild_master', payload.guildMaster)
+        .andWhere('nonce', nonce)
+        .first()
+      await guildRecord?.merge(payload).save()
 
-      await RoleChannel.create({
-        roleName: payload.guildName,
-      })
-
-      response.ok({
-        statusCode: 200,
-        message: 'create new channel successfully',
-        data: guildRecord,
-      })
+      // INTERACT WITH DISCORD SERVER
+      // create channel and role
+      const roleId = await createRole(guildName)
+      await createChannel(guildName, roleId)
     } catch {
       response.internalServerError({
         statusCode: 500,
-        message: 'create new channel failed',
+        message: 'save data or discord server error',
       })
-      return
     }
+
+    response.ok({
+      statusCode: 200,
+      message: 'update successfully',
+      data: payload,
+    })
   }
 
-  public async updateGuild({ request, response }: HttpContextContract) {
+  public async updateGuildBackend({ request, response }: HttpContextContract) {
     // validate input data
     const payload = await request.validate({
-      schema: updateGuildValidator,
+      schema: updateGuildBackendValidator,
       data: request.body(),
     })
 
-    // check guild exist
-    const guildRecord = await GuildChannel.findBy('guild_id', payload.guildId)
+    const imageFile = await request.validate({
+      schema: guildSymbolValidator,
+      data: request.allFiles(),
+    })
+
+    // update off-chain info
+    const guildRecord = await GuildBackend.findBy('guild_id', payload.guildId)
+
     if (!guildRecord) {
       response.notFound({
         statusCode: 404,
-        message: 'guild channel unknown',
+        message: 'guild unknown',
       })
       return
-    }
+    } else {
+      try {
+        // update members
+        const guildContract = getMechGuildContract()
+        const guildId = payload.guildId
+        const updateMembers = (await guildContract.getMemberOfGuild(guildId)).toString()
+        const updateData = {
+          members: updateMembers,
+          ...payload,
+        }
 
-    try {
-      const roleRecord = await RoleChannel.findBy('role_name', payload.guildName)
-      if (roleRecord) {
-        roleRecord.roleName = payload.guildName
-        await roleRecord.save()
+        // update role name on discord server and backend information
+        const roleRecord = await RoleChannel.findBy('role_name', guildRecord.guildName)
+        if (roleRecord && roleRecord.roleName !== payload.guildName) {
+          const roleId = roleRecord.roleId ? roleRecord.roleId : ''
+          await changeRoleName(roleId, payload.guildName)
+
+          await roleRecord
+            ?.merge({
+              roleName: payload.guildName,
+            })
+            .save()
+        }
+
+        // update channel name on discord server
+        const guildChannelRecord = await GuildChannel.findBy('guild_name', guildRecord.guildName)
+        if (guildChannelRecord && guildChannelRecord.guildName !== payload.guildName) {
+          const guildId = guildChannelRecord.guildId ? guildChannelRecord.guildId : ''
+          await changeChannelName(guildId, payload.guildName)
+
+          await guildChannelRecord
+            ?.merge({
+              guildName: payload.guildName,
+            })
+            .save()
+        }
+
+        // update data in backend
+
+        await guildRecord.merge(updateData).save()
+      } catch {
+        response.badRequest({
+          statusCode: 400,
+          message: 'please check update info again',
+        })
+        return
       }
-
-      guildRecord.guildName = payload.guildName
-      await guildRecord.save()
-      response.ok({
-        statusCode: 200,
-        message: 'update guild channel successfully',
-        data: guildRecord,
-      })
-    } catch {
-      response.internalServerError({
-        statusCode: 500,
-        message: 'update channel failed',
-      })
     }
+
+    // change filename to guildName
+    await imageFile.guildSymbol.moveToDisk('images', {
+      name: `${payload.guildName}.png`,
+    })
+
+    response.ok({
+      statusCode: 200,
+      message: 'update successfully',
+      data: payload,
+    })
   }
 
   public async getGuild({ request, response }: HttpContextContract) {
-    // validate input data
-    const payload = await request.validate({
-      schema: getGuildValidator,
-      data: request.params,
-    })
-
-    // check guild exist
-    const guildRecord = await GuildChannel.findBy('guild_id', payload.guildId)
-    if (!guildRecord) {
-      response.notFound({
-        statusCode: 404,
-        message: 'guild channel unknown',
+    const id = request.param('id')
+    if (id) {
+      const guildRecord = await GuildBackend.findBy('id', id)
+      if (!guildRecord) {
+        response.notFound({
+          statusCode: 404,
+          message: 'guild unknown',
+        })
+        return
+      }
+      response.ok({
+        statusCode: 200,
+        message: 'successfully',
+        data: guildRecord,
       })
       return
     }
+    // validate filter information
+    const filterPayload = await request.validate({
+      schema: guildHomeValidator,
+      data: request.all(),
+    })
+
+    // query data
+    const guildTag = filterPayload.guildTag ? filterPayload.guildTag : ''
+    const region = filterPayload.region ? filterPayload.region : ''
+
+    // query builder with filter for guildTag and region
+    const guildRecords = await Database.rawQuery(
+      `select * from guild_backends where lower(guild_tag) like :guildTag and lower(region) like :region`,
+      { guildTag: `%${guildTag.toLowerCase()}%`, region: `%${region.toLowerCase()}%` }
+    )
+
     response.ok({
       statusCode: 200,
-      message: 'update guild channel successfully',
-      data: guildRecord,
+      message: 'successfully',
+      data: guildRecords.rows,
     })
+  }
+
+  // --- End guild CRUD ---
+
+  // internal function
+  private async finalCreateGuild(roleChannel, guildChannel, guildBackend) {
+    await RoleChannel.create(roleChannel)
+    await GuildChannel.create(guildChannel)
+    await GuildBackend.create(guildBackend)
   }
 }

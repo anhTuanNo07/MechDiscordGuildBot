@@ -6,6 +6,9 @@ export default class GuildBackend extends BaseModel {
   public id: number
 
   @column()
+  public guildId: number
+
+  @column()
   public guildName: string
 
   @column()

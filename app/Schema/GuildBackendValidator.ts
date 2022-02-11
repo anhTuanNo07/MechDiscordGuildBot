@@ -18,7 +18,13 @@ const updateGuildBackend = {
   access: schema.boolean(),
   region: schema.string(),
   guildMaster: schema.string(),
-  nonce: schema.string.nullable(),
+}
+
+const updateGuildEvent = {
+  guildId: schema.number(),
+  guildMaster: schema.string(),
+  access: schema.boolean.optional(),
+  nonce: schema.string.optional(),
 }
 
 const guildSymbol = {
@@ -64,6 +70,8 @@ const getUserBackend = {
 export const guildBackendValidator = schema.create(createGuildBackend)
 
 export const updateGuildBackendValidator = schema.create(updateGuildBackend)
+
+export const updateGuildEventValidator = schema.create(updateGuildEvent)
 
 export const guildSymbolValidator = schema.create(guildSymbol)
 

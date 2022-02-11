@@ -1,177 +1,160 @@
-import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import User from 'App/Models/User'
-import RoleChannel from 'App/Models/RoleChannel'
-import { userRoleValidator } from 'App/Schema/UserRoleValidator'
 import { assignUserRoleOnDiscord, unassignUserRoleOnDiscord } from 'App/Utils/GuildMembersUtils'
-import { verifyJoinGuildSign } from 'App/Utils/BlockChainUtil'
+import Database from '@ioc:Adonis/Lucid/Database'
+import { signer, signJoinGuild } from 'App/Utils/BlockChainUtil'
+import {
+  joinGuildValidator,
+  createMemberValidator,
+  getUserBackendValidator,
+  updateMemberEventValidator,
+} from 'App/Schema/GuildBackendValidator'
+import GuildChannel from 'App/Models/GuildChannel'
+import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import UserBackend from 'App/Models/UserBackend'
+export default class GuildBackendsController {
+  // --- Guild members ---
+  public async joinGuild({ request, response }: HttpContextContract) {
+    // validate input data
+    const payload = await request.validate({
+      schema: joinGuildValidator,
+      data: request.body(),
+    })
 
-export default class GuildMembersController {
-  // ------------------------------
-  // --- CRUD user-role-assign  ---
-  // ------------------------------
-  // public async assignUserRole({ request, response }: HttpContextContract) {
-  //   // validate input data
-  //   const payload = await request.validate({
-  //     schema: userRoleValidator,
-  //     data: request.body(),
-  //   })
-  //   const userId = payload.userId
-  //   const roleId = payload.roleId
-  //   // validate exist user
-  //   const userRecord = await User.findBy('user_id', userId)
-  //   if (!userRecord) {
-  //     response.notFound({
-  //       statusCode: 404,
-  //       message: 'user unknown',
-  //     })
-  //     return
-  //   }
-  //   // validate exist role
-  //   const roleRecord = await RoleChannel.findBy('role_id', roleId)
-  //   if (!roleRecord) {
-  //     response.notFound({
-  //       statusCode: 404,
-  //       message: 'role unknown',
-  //     })
-  //     return
-  //   }
-  //   // validate user has had a certain role
-  //   if (userRecord.roleId) {
-  //     await unassignUserRoleOnDiscord(userId, roleId)
-  //   }
-  //   // validate signature
-  //   const { sig, guildId, nonce, deadline, signer } = payload
-  //   const validateSign = verifyJoinGuildSign({ sig, guildId, nonce, deadline, signer })
-  //   if (!validateSign) {
-  //     response.unauthorized({
-  //       statusCode: 401,
-  //       message: 'not valid signature',
-  //     })
-  //     return
-  //   }
-  //   try {
-  //     const roleMember = await assignUserRoleOnDiscord(userId, roleId)
-  //     const roleRecord = await RoleChannel.findBy('role_id', roleId)
-  //     const userRecord = await User.findBy('user_id', userId)
-  //     if (userRecord && roleRecord) {
-  //       userRecord.roleId = roleRecord.id.toString()
-  //       await userRecord.save()
-  //     }
-  //     response.ok({
-  //       statusCode: 200,
-  //       message: 'assign role successfully.',
-  //       data: {
-  //         userId: roleMember?.id,
-  //         username: roleMember?.user.username,
-  //         discriminator: roleMember?.user.discriminator,
-  //         roleId: roleId,
-  //       },
-  //     })
-  //   } catch {
-  //     response.internalServerError({
-  //       statusCode: 500,
-  //       message: 'update on discord or db erupt ',
-  //     })
-  //   }
-  // }
-  // public async removeUserRole({ request, response }: HttpContextContract) {
-  //   // validate input data
-  //   const payload = await request.validate({
-  //     schema: userRoleValidator,
-  //     data: request.body(),
-  //   })
-  //   const userId = payload.userId
-  //   const roleId = payload.roleId
-  //   // validate exist user
-  //   const userRecord = await User.findBy('user_id', userId)
-  //   if (!userRecord) {
-  //     response.notFound({
-  //       statusCode: 404,
-  //       message: 'user unknown',
-  //     })
-  //     return
-  //   }
-  //   // validate exist role
-  //   const roleRecord = await RoleChannel.findBy('role_id', roleId)
-  //   if (!roleRecord) {
-  //     response.notFound({
-  //       statusCode: 404,
-  //       message: 'role unknown',
-  //     })
-  //     return
-  //   }
-  //   try {
-  //     const roleMember = await unassignUserRoleOnDiscord(userId, roleId)
-  //     response.ok({
-  //       statusCode: 200,
-  //       message: 'remove role successfully.',
-  //       data: {
-  //         userId: roleMember?.id,
-  //         username: roleMember?.user.username,
-  //         discriminator: roleMember?.user.discriminator,
-  //         roleId: roleId,
-  //       },
-  //     })
-  //   } catch {
-  //     response.internalServerError({
-  //       statusCode: 400,
-  //       message: 'remove role on discord or server error',
-  //     })
-  //   }
-  //   userRecord.roleId = null
-  //   await userRecord.save()
-  // }
-  // --- End handle about assign role for user ---
-  // TO_DO_______
-  // This function is modified for guild master
-  // But the guild master role is partially controlled on smart contract
-  // So this function is left by the comment for reuse
-  // public async updateGuildMember({ request, response }: HttpContextContract) {
-  //   const userId = request.param('id')
-  //   const param = request.body()
-  //   const guildName = param.guildName
-  //   const guildMaster = param.guildMaster
-  //   console.log(userId, 'userId')
-  //   const user = await User.findBy('user_id', userId)
-  //   if (user) {
-  //     // update guild
-  //     const guild = await GuildChannel.findBy('guild_name', guildName)
-  //     if (!guild) {
-  //       await GuildChannel.create({
-  //         guildName: guildName,
-  //         generatedChannel: false,
-  //       })
-  //     } else {
-  //       //update user information
-  //       user.guildId = guild.id
-  //       await user.save()
-  //       //update guildMember information
-  //       if (guildMaster) {
-  //         guild.guildMaster = user.userId
-  //         await guild.save()
-  //       }
-  //     }
-  //     // update role
-  //     // const role = await RoleChannel.firstOrCreate({
-  //     //   roleName: guildName,
-  //     //   generatedRole: false,
-  //     // })
-  //     const role = await RoleChannel.findBy('role_name', guildName)
-  //     if (!role) {
-  //       await RoleChannel.create({
-  //         roleName: guildName,
-  //         generatedRole: false,
-  //       })
-  //     }
-  //     response.ok({
-  //       statusCode: 200,
-  //       message: 'update guild member information successfully',
-  //     })
-  //   } else {
-  //     response.notFound({
-  //       statusCode: 400,
-  //       message: 'user not found',
-  //     })
-  //   }
-  // }
+    let signature
+
+    try {
+      const Signer = signer
+      signature = await signJoinGuild(payload.id, payload.member, Signer)
+    } catch (error) {
+      response.internalServerError({
+        statusCode: 500,
+        message: 'join guild transaction or sign error',
+      })
+      return
+    }
+
+    // return data
+    response.ok({
+      statusCode: 200,
+      message: 'sign join guild successfully',
+      data: signature,
+    })
+  }
+
+  // CRUD
+  public async createMember({ request, response }: HttpContextContract) {
+    // validate input data
+    const payload = await request.validate({
+      schema: createMemberValidator,
+      data: request.body(),
+    })
+
+    try {
+      await UserBackend.create(payload)
+    } catch (error) {
+      response.internalServerError({
+        statusCode: 500,
+        message: 'create member failed',
+      })
+      return
+    }
+
+    response.ok({
+      statusCode: 200,
+      message: 'create member successfully',
+    })
+  }
+
+  public async updateMemberEvent({ request, response }: HttpContextContract) {
+    // validate input data
+    const payload = await request.validate({
+      schema: updateMemberEventValidator,
+      data: request.body(),
+    })
+
+    const userRecord = await UserBackend.findBy('address', payload.address)
+    if (!userRecord) {
+      response.notFound({
+        statusCode: 404,
+        message: 'user unknown',
+      })
+      return
+    }
+
+    const guildRecord = await GuildChannel.findBy('guild_id', payload.guildId)
+
+    if (payload.inGuild && userRecord.discordId && guildRecord) {
+      // member join guild, need to assign role
+      await assignUserRoleOnDiscord(userRecord.discordId, guildRecord.guildName)
+    }
+    if (!payload.inGuild && userRecord.discordId && guildRecord) {
+      // member out of guild, need to unassign role
+      await unassignUserRoleOnDiscord(userRecord.discordId, guildRecord.guildName)
+    }
+  }
+
+  public async updateMemberBackend({ request, response }: HttpContextContract) {
+    // validate input data
+    const payload = await request.validate({
+      schema: createMemberValidator,
+      data: request.body(),
+    })
+
+    const id = request.param('id')
+    const userRecord = await UserBackend.findBy('id', id)
+    if (!userRecord) {
+      response.notFound({
+        statusCode: 404,
+        message: 'user unknown',
+      })
+      return
+    }
+    await userRecord.merge(payload).save()
+
+    response.ok({
+      statusCode: 200,
+      message: 'update user successfully',
+    })
+  }
+
+  public async getMembers({ request, response }: HttpContextContract) {
+    const id = request.param('id')
+    if (id) {
+      const userRecord = await UserBackend.findBy('id', id)
+      if (!userRecord) {
+        response.notFound({
+          statusCode: 404,
+          message: 'user unknown',
+        })
+        return
+      }
+      response.ok({
+        statusCode: 200,
+        message: 'successfully',
+        data: userRecord,
+      })
+      return
+    }
+
+    // validate filter information
+    const filterPayload = await request.validate({
+      schema: getUserBackendValidator,
+      data: request.all(),
+    })
+
+    // query data
+    const address = filterPayload.address ? filterPayload.address : ''
+    const discord = filterPayload.discord ? filterPayload.discord : ''
+
+    // query builder with filter for guildTag and region
+    const guildRecords = await Database.rawQuery(
+      `select * from user_backends where lower(address) like :address and lower(discord) like :discord`,
+      { address: `%${address.toLowerCase()}%`, discord: `%${discord.toLowerCase()}%` }
+    )
+
+    response.ok({
+      statusCode: 200,
+      message: 'successfully',
+      data: guildRecords.rows,
+    })
+  }
 }
