@@ -6,13 +6,13 @@ export default class UserBackend extends BaseModel {
   public id: number
 
   @column()
-  public role: string
+  public role: string | null
 
   @column()
   public address: string
 
   @column()
-  public discord: string | null
+  public discordId: string | null
 
   @column()
   public mechaOwn: number | null

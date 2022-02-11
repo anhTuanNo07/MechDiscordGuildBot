@@ -26,7 +26,7 @@ Route.group(() => {
   // Cannot delete guild as information on blockchain is uncertainty
 
   // --- member webhook ---
-  Route.post('member', 'GuildBackendsController.createMember')
+  Route.post('member', 'GuildBackendsController.updateMemberEvent')
   // no need to have delete member
 })
   .prefix('api/webhook')
@@ -45,7 +45,7 @@ Route.group(() => {
   Route.post('join', 'GuildBackendsController.joinGuild')
   // member CRUD
   Route.post('member', 'GuildBackendsController.createMember')
-  Route.patch('member/:id', 'GuildBackendsController.updateMember')
+  Route.patch('member/:id', 'GuildBackendsController.updateMemberBackend')
   Route.get('member/:id?', 'GuildBackendsController.getMembers')
   // no need to have delete member
 }).prefix('api/backend')

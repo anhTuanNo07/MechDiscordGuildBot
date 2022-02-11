@@ -1,3 +1,4 @@
+import { assignUserRoleOnDiscord, unassignUserRoleOnDiscord } from 'App/Utils/GuildMembersUtils'
 import {
   changeChannelName,
   changeRoleName,
@@ -20,6 +21,7 @@ import {
   guildHomeValidator,
   createMemberValidator,
   getUserBackendValidator,
+  updateMemberEventValidator,
 } from 'App/Schema/GuildBackendValidator'
 import GuildChannel from 'App/Models/GuildChannel'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
@@ -297,7 +299,7 @@ export default class GuildBackendsController {
     } catch (error) {
       response.internalServerError({
         statusCode: 500,
-        message: 'create member faileds',
+        message: 'create member failed',
       })
       return
     }
@@ -308,7 +310,35 @@ export default class GuildBackendsController {
     })
   }
 
-  public async updateMember({ request, response }: HttpContextContract) {
+  public async updateMemberEvent({ request, response }: HttpContextContract) {
+    // validate input data
+    const payload = await request.validate({
+      schema: updateMemberEventValidator,
+      data: request.body(),
+    })
+
+    const userRecord = await UserBackend.findBy('address', payload.address)
+    if (!userRecord) {
+      response.notFound({
+        statusCode: 404,
+        message: 'user unknown',
+      })
+      return
+    }
+
+    const guildRecord = await GuildChannel.findBy('guild_id', payload.guildId)
+
+    if (payload.inGuild && userRecord.discordId && guildRecord) {
+      // member join guild, need to assign role
+      await assignUserRoleOnDiscord(userRecord.discordId, guildRecord.guildName)
+    }
+    if (!payload.inGuild && userRecord.discordId && guildRecord) {
+      // member out of guild, need to unassign role
+      await unassignUserRoleOnDiscord(userRecord.discordId, guildRecord.guildName)
+    }
+  }
+
+  public async updateMemberBackend({ request, response }: HttpContextContract) {
     // validate input data
     const payload = await request.validate({
       schema: createMemberValidator,
@@ -359,7 +389,6 @@ export default class GuildBackendsController {
 
     // query data
     const address = filterPayload.address ? filterPayload.address : ''
-    console.log(filterPayload)
     const discord = filterPayload.discord ? filterPayload.discord : ''
 
     // query builder with filter for guildTag and region
@@ -381,6 +410,4 @@ export default class GuildBackendsController {
     await GuildChannel.create(guildChannel)
     await GuildBackend.create(guildBackend)
   }
-
-  // private async finalUpdateGuild() {}
 }

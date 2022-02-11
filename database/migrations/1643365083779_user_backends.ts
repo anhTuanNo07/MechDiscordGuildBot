@@ -6,9 +6,9 @@ export default class UserBackends extends BaseSchema {
   public async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
-      table.string('role').notNullable()
+      table.string('role')
       table.string('address').notNullable().index()
-      table.string('discord')
+      table.string('discord_id')
       table.integer('mecha_own')
       table.string('distance')
       table.string('contribution')
