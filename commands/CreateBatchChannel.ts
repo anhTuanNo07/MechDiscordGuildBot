@@ -73,7 +73,7 @@ export default class CreateBatchChannel extends BaseCommand {
             permissionOverwrites: [
               {
                 id: everyoneRole ? everyoneRole : Env.get('EVERYONE_ROLE'),
-                deny: [Permissions.FLAGS.VIEW_CHANNEL],
+                allow: [Permissions.FLAGS.VIEW_CHANNEL],
               },
             ],
             reason: 'create batch of guild channel',
@@ -95,7 +95,6 @@ export default class CreateBatchChannel extends BaseCommand {
             const guild = await GuildChannel.findBy('guild_name', channel.name)
             if (guild) {
               guild.guildId = channel.id
-              guild.generatedChannel = true
               await guild.save()
               this.logger.info(`Create guild channel '${channel.name}' successfully.`)
             } else {

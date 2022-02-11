@@ -11,9 +11,6 @@ export default class RoleChannel extends BaseModel {
   @column()
   public roleId: string | null
 
-  @column()
-  public generatedRole: boolean
-
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

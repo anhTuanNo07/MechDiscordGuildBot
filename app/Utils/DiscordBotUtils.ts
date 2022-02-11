@@ -168,3 +168,21 @@ export async function fetchUsername(
   })
   return returnValue
 }
+
+export async function createRole(roleName: string) {
+  const client = await autoLogin()
+  const guild = await getGuild(client)
+}
+
+export async function changeRoleName(roleId: string, roleName: string) {
+  const client = await autoLogin()
+  const guild = await getGuild(client)
+  await guild?.roles.edit(roleId, { name: roleName })
+}
+
+export async function changeChannelName(channelId: string, channelName: string) {
+  const client = await autoLogin()
+  const guild = await getGuild(client)
+  const channel = await guild?.channels.cache.get(channelId)
+  await channel?.edit({ name: channelName })
+}

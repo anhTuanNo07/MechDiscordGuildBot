@@ -18,6 +18,7 @@ const updateGuildBackend = {
   access: schema.boolean(),
   region: schema.string(),
   guildMaster: schema.string(),
+  nonce: schema.string.nullable(),
 }
 
 const guildSymbol = {
