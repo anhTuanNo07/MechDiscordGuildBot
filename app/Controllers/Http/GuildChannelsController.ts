@@ -73,55 +73,6 @@ export default class GuildBackendsController {
     })
   }
 
-  public async updateGuildEvent({ request, response }: HttpContextContract) {
-    // validate input data
-    const payload = await request.validate({
-      schema: updateGuildEventValidator,
-      data: request.body(),
-    })
-
-    try {
-      let guildName
-      if (payload.nonce) {
-        const nonce = payload.nonce
-        const guildRecord = await GuildBackend.query()
-          .where('guild_master', payload.guildMaster)
-          .andWhere('nonce', nonce)
-          .first()
-        await guildRecord?.merge(payload).save()
-        guildName = guildRecord?.guildName
-        await RoleChannel.create({ roleName: guildName })
-        await GuildChannel.create({ guildName: guildName })
-      } else {
-        const guildRecord = await GuildBackend.query().where('guild_id', payload.guildId).first()
-        await guildRecord?.merge(payload).save()
-        guildName = guildRecord?.guildName
-      }
-      const nonce = payload.nonce ? payload.nonce : ''
-      const guildRecord = await GuildBackend.query()
-        .where('guild_master', payload.guildMaster)
-        .andWhere('nonce', nonce)
-        .first()
-      await guildRecord?.merge(payload).save()
-
-      // INTERACT WITH DISCORD SERVER
-      // create channel and role
-      const roleId = await createRole(guildName)
-      await createChannel(guildName, roleId)
-    } catch {
-      response.internalServerError({
-        statusCode: 500,
-        message: 'save data or discord server error',
-      })
-    }
-
-    response.ok({
-      statusCode: 200,
-      message: 'update successfully',
-      data: payload,
-    })
-  }
-
   public async updateGuildBackend({ request, response }: HttpContextContract) {
     // validate input data
     const payload = await request.validate({

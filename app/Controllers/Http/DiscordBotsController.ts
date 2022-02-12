@@ -1,22 +1,8 @@
-import { roleIdValidator } from './../../Schema/DiscordBotRequestValidator'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { GuildMember } from 'discord.js'
 import User from 'App/Models/User'
-import RoleChannel from 'App/Models/RoleChannel'
-import {
-  roleDataValidator,
-  verifyUserRequest,
-  getUserDiscordValidator,
-} from 'App/Schema/DiscordBotRequestValidator'
-import {
-  autoLogin,
-  fetchRoleData,
-  fetchRoleResponse,
-  fetchRoleUpdateData,
-  fetchUsername,
-  getGuild,
-} from 'App/Utils/DiscordBotUtils'
-import Database from '@ioc:Adonis/Lucid/Database'
+import { verifyUserRequest } from 'App/Schema/DiscordBotRequestValidator'
+import { autoLogin, fetchUsername, getGuild } from 'App/Utils/DiscordBotUtils'
 
 export default class DiscordBotsController {
   // --- Validate user ---
@@ -38,6 +24,7 @@ export default class DiscordBotsController {
         statusCode: 404,
         message: 'Guild Not Found',
       })
+      return
     }
     // Confirm Guild Exist
 
@@ -73,6 +60,7 @@ export default class DiscordBotsController {
         statusCode: 404,
         message: 'Unknown username',
       })
+      return
     }
 
     const data = {

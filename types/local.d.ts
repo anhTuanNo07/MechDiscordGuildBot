@@ -10,14 +10,14 @@ export interface WebhookEvent<TEventName extends string, TData extends Record<st
 }
 
 export interface GuildCreatedData {
-  guildId: string
+  guildId: number
   guildMaster: string
   sigNonce: string
   bool: boolean
 }
 
 export interface GuildMasterChangedData {
-  guildId: string
+  guildId: number
   oldMaster: string
   newMaster: string
 }
