@@ -46,6 +46,6 @@ Route.group(() => {
   // member CRUD
   Route.post('member', 'GuildMembersController.createMember')
   Route.patch('member', 'GuildMembersController.updateMemberBackend')
-  Route.get('member/:id?', 'GuildMembersController.getMembers')
+  Route.get('member/:wallet?', 'GuildMembersController.getMembers')
   // no need to have delete member
 }).prefix('api/backend')

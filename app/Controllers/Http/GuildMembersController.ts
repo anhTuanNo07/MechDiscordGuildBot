@@ -117,9 +117,9 @@ export default class GuildBackendsController {
   }
 
   public async getMembers({ request, response }: HttpContextContract) {
-    const id = request.param('id')
-    if (id) {
-      const userRecord = await UserBackend.findBy('id', id)
+    const wallet = request.param('wallet')
+    if (wallet) {
+      const userRecord = await UserBackend.findBy('address', wallet)
       if (!userRecord) {
         response.notFound({
           statusCode: 404,
