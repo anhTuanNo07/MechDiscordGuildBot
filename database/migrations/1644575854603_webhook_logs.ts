@@ -9,7 +9,6 @@ export default class WebhookLogs extends BaseSchema {
 
       table.text('data')
       table.integer('status').defaultTo(0)
-      table.string('tx_hash')
 
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
