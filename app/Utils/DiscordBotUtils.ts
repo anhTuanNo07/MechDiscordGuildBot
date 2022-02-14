@@ -201,7 +201,7 @@ export async function createRole(roleName: string): Promise<string> {
 export async function createChannel(channelName: string, roleId: Snowflake) {
   const client = await autoLogin()
   const guild = await getGuild(client)
-  const everyoneRole = Env.get('EVERYONE_ROLE')
+  const everyoneRole = Env.get('SERVER_ID')
   await guild?.channels
     .create(channelName, {
       type: 'GUILD_TEXT',
