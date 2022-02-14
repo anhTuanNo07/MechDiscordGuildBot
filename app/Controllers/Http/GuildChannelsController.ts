@@ -159,7 +159,7 @@ export default class GuildBackendsController {
   public async getGuild({ request, response }: HttpContextContract) {
     const id = request.param('id')
     if (id) {
-      const guildRecord = await GuildBackend.findBy('id', id)
+      const guildRecord = await GuildBackend.findBy('guild_id', id)
       if (!guildRecord) {
         response.notFound({
           statusCode: 404,
@@ -170,7 +170,15 @@ export default class GuildBackendsController {
       response.ok({
         statusCode: 200,
         message: 'successfully',
-        data: guildRecord,
+        data: {
+          guild_id: guildRecord.guildId,
+          guild_name: guildRecord.guildName,
+          guild_tag: guildRecord.guildTag,
+          guild_description: guildRecord.guildDescription,
+          is_private: guildRecord.access,
+          region: guildRecord.region,
+          guild_master: guildRecord.guildMaster,
+        },
       })
       return
     }
@@ -193,7 +201,18 @@ export default class GuildBackendsController {
     response.ok({
       statusCode: 200,
       message: 'successfully',
-      data: guildRecords.rows,
+      data: guildRecords.rows.map((guildRecord) => {
+        return {
+          guild_id: guildRecord.guild_id,
+          guild_name: guildRecord.guild_name,
+          guild_tag: guildRecord.guild_tag,
+          guild_symbol: guildRecord.guild_symbol,
+          guild_description: guildRecord.guild_description,
+          is_private: guildRecord.access,
+          region: guildRecord.region,
+          guild_master: guildRecord.guild_master,
+        }
+      }),
     })
   }
 
