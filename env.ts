@@ -25,6 +25,7 @@ export default Env.rules({
   BOT_TOKEN: Env.schema.string(),
   SERVER_ID: Env.schema.string(),
   GUILD_PREFIX: Env.schema.string(),
+  GUILD_CATEGORY: Env.schema.string(),
   // DB
   PG_HOST: Env.schema.string({ format: 'host' }),
   PG_PORT: Env.schema.number(),

@@ -199,25 +199,31 @@ export async function createRole(roleName: string): Promise<string> {
 }
 
 export async function createChannel(channelName: string, roleId: Snowflake) {
+  const everyoneRole = Env.get('SERVER_ID')
   const client = await autoLogin()
   const guild = await getGuild(client)
-  const everyoneRole = Env.get('SERVER_ID')
   await guild?.channels
     .create(`[${Env.get('GUILD_PREFIX')}] - ${channelName}`, {
       type: 'GUILD_TEXT',
-      permissionOverwrites: [
-        {
-          id: everyoneRole,
-          deny: [Permissions.FLAGS.VIEW_CHANNEL],
-        },
-        {
-          id: roleId, // assign role for channel
-          allow: [Permissions.FLAGS.VIEW_CHANNEL],
-        },
-      ],
       reason: 'create guild channel',
     })
     .then(async (channel) => {
+      // permission assignments
+      await channel.edit({
+        permissionOverwrites: [
+          {
+            id: everyoneRole,
+            deny: [Permissions.FLAGS.VIEW_CHANNEL],
+          },
+          {
+            id: roleId, // assign role for channel
+            allow: [Permissions.FLAGS.VIEW_CHANNEL],
+          },
+        ],
+      })
+      // put into guild category
+      await channel.setParent(Env.get('GUILD_CATEGORY'), { lockPermissions: false })
+
       const guild = await GuildChannel.findBy('guild_name', channelName)
       if (guild) {
         guild.guildId = channel.id
