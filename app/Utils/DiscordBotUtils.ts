@@ -193,22 +193,29 @@ export async function createRole(roleName: string): Promise<string> {
           'Create role channel error. Please check the roles table for more information.'
         )
       }
+      roleId = role.id
     })
   return roleId
 }
 
-export async function createChannel(channelName: string, roleId: string) {
+export async function createChannel(channelName: string, roleId: Snowflake) {
   const client = await autoLogin()
   const guild = await getGuild(client)
+  const everyoneRole = Env.get('EVERYONE_ROLE')
   await guild?.channels
     .create(channelName, {
+      type: 'GUILD_TEXT',
       permissionOverwrites: [
+        {
+          id: everyoneRole,
+          deny: [Permissions.FLAGS.VIEW_CHANNEL],
+        },
         {
           id: roleId, // assign role for channel
           allow: [Permissions.FLAGS.VIEW_CHANNEL],
         },
       ],
-      reason: 'create batch of guild channel',
+      reason: 'create guild channel',
     })
     .then(async (channel) => {
       const guild = await GuildChannel.findBy('guild_name', channel.name)
