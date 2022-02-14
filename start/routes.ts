@@ -21,7 +21,7 @@
 import Route from '@ioc:Adonis/Core/Route'
 
 // webhook events route
-Route.post('api/webhook/events', 'EventsController.processEvent').middleware('webhookAuth')
+Route.post('webhook/events', 'EventsController.processEvent').middleware('webhookAuth')
 
 // backend routes
 Route.group(() => {
@@ -37,7 +37,7 @@ Route.group(() => {
   Route.post('join', 'GuildMembersController.joinGuild')
   // member CRUD
   Route.post('member', 'GuildMembersController.createMember')
-  Route.patch('member', 'GuildMembersController.updateMemberBackend')
+  Route.put('member', 'GuildMembersController.updateMemberBackend')
   Route.get('member/:wallet?', 'GuildMembersController.getMembers')
   // no need to have delete member
 }).prefix('api/backend')

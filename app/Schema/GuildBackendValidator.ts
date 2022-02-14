@@ -44,16 +44,9 @@ const joinGuildBackend = {
   member: schema.string(),
 }
 
-const createMemberBackend = {
-  role: schema.string.nullable(),
+const updateMemberBackend = {
   address: schema.string(),
   discordId: schema.string.nullable(),
-  mechaOwn: schema.number.nullable(),
-  distance: schema.string.nullable(),
-  contribution: schema.string.nullable(),
-  guildPoint: schema.string.nullable(),
-  guildMaterials: schema.string.nullable(),
-  nitro: schema.string.nullable(),
 }
 
 const updateMemberEvent = {
@@ -79,7 +72,7 @@ export const joinGuildValidator = schema.create(joinGuildBackend)
 
 export const guildHomeValidator = schema.create(guildHome)
 
-export const createMemberValidator = schema.create(createMemberBackend)
+export const updateMemberValidator = schema.create(updateMemberBackend)
 
 export const updateMemberEventValidator = schema.create(updateMemberEvent)
 

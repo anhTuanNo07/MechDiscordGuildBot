@@ -27,12 +27,6 @@ export default class UserBackend extends BaseModel {
   public guildPoint: string | null
 
   @column()
-  public guildMaterials: string | null
-
-  @column()
-  public nitro: string | null
-
-  @column()
   public valid: boolean
 
   @column.dateTime({ autoCreate: true })

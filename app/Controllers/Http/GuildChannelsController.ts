@@ -55,6 +55,7 @@ export default class GuildBackendsController {
       guildDescription: payload.guildDescription,
       access: payload.access,
       guildMaster: payload.guildMaster,
+      region: payload.region,
       members: payload.guildMaster,
       nonce: await getNonce(payload.guildMaster),
     }

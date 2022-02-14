@@ -2,7 +2,7 @@ import Database from '@ioc:Adonis/Lucid/Database'
 import { signer, signJoinGuild } from 'App/Utils/BlockChainUtil'
 import {
   joinGuildValidator,
-  createMemberValidator,
+  updateMemberValidator,
   getUserBackendValidator,
 } from 'App/Schema/GuildBackendValidator'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
@@ -41,7 +41,7 @@ export default class GuildBackendsController {
   public async createMember({ request, response }: HttpContextContract) {
     // validate input data
     const payload = await request.validate({
-      schema: createMemberValidator,
+      schema: updateMemberValidator,
       data: request.body(),
     })
 
@@ -64,20 +64,14 @@ export default class GuildBackendsController {
   public async updateMemberBackend({ request, response }: HttpContextContract) {
     // validate input data
     const payload = await request.validate({
-      schema: createMemberValidator,
+      schema: updateMemberValidator,
       data: request.body(),
     })
 
-    const address = payload.address
-    const userRecord = await UserBackend.findBy('address', address)
-    if (!userRecord) {
-      response.notFound({
-        statusCode: 404,
-        message: 'user unknown',
-      })
-      return
-    }
-    await userRecord.merge(payload).save()
+    await UserBackend.updateOrCreate(
+      { address: payload.address },
+      { address: payload.address, discordId: payload.discordId }
+    )
 
     response.ok({
       statusCode: 200,
