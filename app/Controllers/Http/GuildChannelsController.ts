@@ -194,7 +194,7 @@ export default class GuildBackendsController {
 
     // query builder with filter for guildTag and region
     const guildRecords = await Database.rawQuery(
-      `select * from guild_backends where lower(guild_tag) like :guildTag and lower(region) like :region`,
+      `select * from guild_backends where guild_id IS NOT NULL and lower(guild_tag) like :guildTag and lower(region) like :region`,
       { guildTag: `%${guildTag.toLowerCase()}%`, region: `%${region.toLowerCase()}%` }
     )
 
