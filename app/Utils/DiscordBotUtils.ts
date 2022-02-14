@@ -203,7 +203,7 @@ export async function createChannel(channelName: string, roleId: Snowflake) {
   const guild = await getGuild(client)
   const everyoneRole = Env.get('SERVER_ID')
   await guild?.channels
-    .create(channelName, {
+    .create(`[${Env.get('GUILD_PREFIX')}] - ${channelName}`, {
       type: 'GUILD_TEXT',
       permissionOverwrites: [
         {
@@ -218,7 +218,7 @@ export async function createChannel(channelName: string, roleId: Snowflake) {
       reason: 'create guild channel',
     })
     .then(async (channel) => {
-      const guild = await GuildChannel.findBy('guild_name', channel.name)
+      const guild = await GuildChannel.findBy('guild_name', channelName)
       if (guild) {
         guild.guildId = channel.id
         await guild.save()
@@ -240,5 +240,5 @@ export async function changeChannelName(channelId: string, channelName: string) 
   const client = await autoLogin()
   const guild = await getGuild(client)
   const channel = await guild?.channels.cache.get(channelId)
-  await channel?.edit({ name: channelName })
+  await channel?.edit({ name: `[${Env.get('GUILD_PREFIX')}] - ${channelName}` })
 }
