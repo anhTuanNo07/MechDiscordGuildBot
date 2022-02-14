@@ -48,6 +48,7 @@ export default class GuildBackendsController {
     }
 
     // save backend information
+    const currentNonce = await getNonce(payload.guildMaster)
     const data = {
       guildName: payload.guildName,
       guildTag: payload.guildTag,
@@ -57,9 +58,31 @@ export default class GuildBackendsController {
       guildMaster: payload.guildMaster,
       region: payload.region,
       members: payload.guildMaster,
-      nonce: await getNonce(payload.guildMaster),
+      nonce: currentNonce,
     }
-    await GuildBackend.create(data)
+
+    const pendingGuild = await GuildBackend.query()
+      .where('guild_master', payload.guildMaster)
+      .andWhere('nonce', currentNonce)
+      .first()
+    if (pendingGuild) {
+      await pendingGuild
+        .merge({
+          guildName: payload.guildName,
+          guildTag: payload.guildTag,
+          guildSymbol: `./tmp/uploads/images/${payload.guildName}.png`,
+          guildDescription: payload.guildDescription,
+          access: payload.access,
+          guildMaster: payload.guildMaster,
+          region: payload.region,
+          members: payload.guildMaster,
+          nonce: currentNonce,
+        })
+        .save()
+    } else {
+      //TODO: check duplicate
+      await GuildBackend.create(data)
+    }
 
     // change filename to guildName and save
     await imageFile.guildSymbol.moveToDisk('images', {
