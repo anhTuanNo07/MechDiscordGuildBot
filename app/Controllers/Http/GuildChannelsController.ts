@@ -26,10 +26,13 @@ export default class GuildBackendsController {
       data: request.body(),
     })
 
-    const imageFile = await request.validate({
-      schema: guildSymbolValidator,
-      data: request.allFiles(),
-    })
+    let imageFile
+    if (request.file('guildSymbol')) {
+      imageFile = await request.validate({
+        schema: guildSymbolValidator,
+        data: request.allFiles(),
+      })
+    }
 
     let signature
 
@@ -85,9 +88,11 @@ export default class GuildBackendsController {
     }
 
     // change filename to guildName and save
-    await imageFile.guildSymbol.moveToDisk('images', {
-      name: `${payload.guildName}.png`,
-    })
+    if (imageFile) {
+      await imageFile.guildSymbol.moveToDisk('images', {
+        name: `${payload.guildName}.png`,
+      })
+    }
 
     // return data
     response.ok({
