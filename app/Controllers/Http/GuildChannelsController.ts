@@ -48,6 +48,7 @@ export default class GuildBackendsController {
     }
 
     // save backend information
+    const currentNonce = await getNonce(payload.guildMaster)
     const data = {
       guildName: payload.guildName,
       guildTag: payload.guildTag,
@@ -57,9 +58,31 @@ export default class GuildBackendsController {
       guildMaster: payload.guildMaster,
       region: payload.region,
       members: payload.guildMaster,
-      nonce: await getNonce(payload.guildMaster),
+      nonce: currentNonce,
     }
-    await GuildBackend.create(data)
+
+    const pendingGuild = await GuildBackend.query()
+      .where('guild_master', payload.guildMaster)
+      .andWhere('nonce', currentNonce)
+      .first()
+    if (pendingGuild) {
+      await pendingGuild
+        .merge({
+          guildName: payload.guildName,
+          guildTag: payload.guildTag,
+          guildSymbol: `./tmp/uploads/images/${payload.guildName}.png`,
+          guildDescription: payload.guildDescription,
+          access: payload.access,
+          guildMaster: payload.guildMaster,
+          region: payload.region,
+          members: payload.guildMaster,
+          nonce: currentNonce,
+        })
+        .save()
+    } else {
+      //TODO: check duplicate
+      await GuildBackend.create(data)
+    }
 
     // change filename to guildName and save
     await imageFile.guildSymbol.moveToDisk('images', {
@@ -159,7 +182,7 @@ export default class GuildBackendsController {
   public async getGuild({ request, response }: HttpContextContract) {
     const id = request.param('id')
     if (id) {
-      const guildRecord = await GuildBackend.findBy('id', id)
+      const guildRecord = await GuildBackend.findBy('guild_id', id)
       if (!guildRecord) {
         response.notFound({
           statusCode: 404,
@@ -170,7 +193,15 @@ export default class GuildBackendsController {
       response.ok({
         statusCode: 200,
         message: 'successfully',
-        data: guildRecord,
+        data: {
+          guild_id: guildRecord.guildId,
+          guild_name: guildRecord.guildName,
+          guild_tag: guildRecord.guildTag,
+          guild_description: guildRecord.guildDescription,
+          is_private: guildRecord.access,
+          region: guildRecord.region,
+          guild_master: guildRecord.guildMaster,
+        },
       })
       return
     }
@@ -186,14 +217,25 @@ export default class GuildBackendsController {
 
     // query builder with filter for guildTag and region
     const guildRecords = await Database.rawQuery(
-      `select * from guild_backends where lower(guild_tag) like :guildTag and lower(region) like :region`,
+      `select * from guild_backends where guild_id IS NOT NULL and lower(guild_tag) like :guildTag and lower(region) like :region`,
       { guildTag: `%${guildTag.toLowerCase()}%`, region: `%${region.toLowerCase()}%` }
     )
 
     response.ok({
       statusCode: 200,
       message: 'successfully',
-      data: guildRecords.rows,
+      data: guildRecords.rows.map((guildRecord) => {
+        return {
+          guild_id: guildRecord.guild_id,
+          guild_name: guildRecord.guild_name,
+          guild_tag: guildRecord.guild_tag,
+          guild_symbol: guildRecord.guild_symbol,
+          guild_description: guildRecord.guild_description,
+          is_private: guildRecord.access,
+          region: guildRecord.region,
+          guild_master: guildRecord.guild_master,
+        }
+      }),
     })
   }
 
