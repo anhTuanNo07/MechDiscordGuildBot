@@ -30,7 +30,7 @@ const updateGuildEvent = {
 const guildSymbol = {
   guildSymbol: schema.file({
     size: '3mb',
-    extnames: ['png'],
+    extnames: ['png', 'jpg'],
   }),
 }
 
