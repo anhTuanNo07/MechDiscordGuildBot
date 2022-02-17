@@ -11,7 +11,7 @@ const moonRaceAPI = Env.get('MOONRACE_API')
 
 const LIST_OWNED_MECHA = gql`
   query ListOwnedMecha($owner: String) {
-    tokens(where: { ownerActual: $owner }, first: 1000) {
+    tokens(where: { owner: $owner }, first: 1000) {
       tokenID
     }
   }
