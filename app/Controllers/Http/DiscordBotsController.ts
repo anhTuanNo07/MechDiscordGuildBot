@@ -35,6 +35,7 @@ export default class DiscordBotsController {
       try {
         const memberQuery = await guild?.members.search({
           query: userInformation,
+          limit: 1000,
         })
 
         userQuery = await fetchUsername(memberQuery, userInformation, discriminator)
