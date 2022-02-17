@@ -6,6 +6,7 @@ import {
   getUserBackendValidator,
 } from 'App/Schema/GuildBackendValidator'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import Event from '@ioc:Adonis/Core/Event'
 import UserBackend from 'App/Models/UserBackend'
 import { utils } from 'ethers'
 export default class GuildBackendsController {
@@ -98,6 +99,8 @@ export default class GuildBackendsController {
       { address: payload.address },
       { address: payload.address, discordId: payload.discordId }
     )
+
+    Event.emit('reload:user', { wallet: payload.address })
 
     response.ok({
       statusCode: 200,

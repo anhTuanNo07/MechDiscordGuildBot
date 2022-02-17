@@ -36,7 +36,6 @@ Route.group(() => {
   // sign member join guild
   Route.post('join', 'GuildMembersController.joinGuild')
   // member CRUD
-  Route.post('member', 'GuildMembersController.createMember')
   Route.put('member', 'GuildMembersController.updateMemberBackend')
   Route.get('member/:wallet?', 'GuildMembersController.getMembers')
   // no need to have delete member

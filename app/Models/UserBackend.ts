@@ -18,7 +18,7 @@ export default class UserBackend extends BaseModel {
   public mechaOwn: number | null
 
   @column()
-  public distance: string | null
+  public distance: number | null
 
   @column()
   public contribution: string | null

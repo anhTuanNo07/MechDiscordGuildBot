@@ -5,7 +5,6 @@ import {
   createChannel,
   createRole,
 } from 'App/Utils/DiscordBotUtils'
-import Database from '@ioc:Adonis/Lucid/Database'
 import { signer, signCreateGuild, getMechGuildContract, getNonce } from 'App/Utils/BlockChainUtil'
 import {
   guildBackendValidator,
@@ -221,24 +220,23 @@ export default class GuildBackendsController {
     const region = filterPayload.region ? filterPayload.region : ''
 
     // query builder with filter for guildTag and region
-    const guildRecords = await Database.rawQuery(
-      `select * from guild_backends where guild_id IS NOT NULL and lower(guild_tag) like :guildTag and lower(region) like :region`,
-      { guildTag: `%${guildTag.toLowerCase()}%`, region: `%${region.toLowerCase()}%` }
-    )
+    const guildRecords = await GuildBackend.query()
+      .whereNotNull('guild_id')
+      .orderBy('distance', 'desc')
 
     response.ok({
       statusCode: 200,
       message: 'successfully',
-      data: guildRecords.rows.map((guildRecord) => {
+      data: guildRecords.map((guildRecord) => {
         return {
-          guild_id: guildRecord.guild_id,
-          guild_name: guildRecord.guild_name,
-          guild_tag: guildRecord.guild_tag,
-          guild_symbol: guildRecord.guild_symbol,
-          guild_description: guildRecord.guild_description,
+          guild_id: guildRecord.guildId,
+          guild_name: guildRecord.guildName,
+          guild_tag: guildRecord.guildTag,
+          guild_description: guildRecord.guildDescription,
+          distance: guildRecord.distance,
           is_private: guildRecord.access,
           region: guildRecord.region,
-          guild_master: guildRecord.guild_master,
+          guild_master: guildRecord.guildMaster,
         }
       }),
     })
