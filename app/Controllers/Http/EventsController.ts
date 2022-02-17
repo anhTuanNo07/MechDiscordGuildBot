@@ -121,7 +121,7 @@ export default class EventsController {
 
     const userRecord = await UserBackend.findBy('address', params.memberAddress)
 
-    const guildRecord = await GuildChannel.findBy('guild_id', params.guildId)
+    const guildRecord = await GuildBackend.findBy('guild_id', params.guildId)
 
     if (!userRecord || !guildRecord) {
       throw new Error('invalid input data')
@@ -139,7 +139,7 @@ export default class EventsController {
 
     const userRecord = await UserBackend.findBy('address', params.memberAddress)
 
-    const guildRecord = await GuildChannel.findBy('guild_id', params.guildId)
+    const guildRecord = await GuildBackend.findBy('guild_id', params.guildId)
 
     if (!userRecord || !guildRecord) {
       throw new Error('invalid input data')
