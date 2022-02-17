@@ -100,6 +100,13 @@ export default class EventsController {
     // create channel and role
     const roleId = await createRole(guildName)
     await createChannel(guildName, roleId)
+    // assign role for guild master
+    try {
+      const userRecord = await UserBackend.findBy('address', params.guildMaster)
+      await assignUserRoleOnDiscord(userRecord?.discordId ? userRecord.discordId : '', guildName)
+    } catch {
+      console.log('enable channel discord failed')
+    }
   }
 
   private async handleGuildMasterChanged(
