@@ -30,6 +30,9 @@ export default class GuildBackend extends BaseModel {
   public guildMaster: string
 
   @column()
+  public distance: number | null
+
+  @column()
   public nonce: string | null
 
   @column()
