@@ -10,6 +10,25 @@
       },
       {
         "indexed": false,
+        "internalType": "bool",
+        "name": "isPrivate",
+        "type": "bool"
+      }
+    ],
+    "name": "GuildAccessChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "guildId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
         "internalType": "address",
         "name": "guildMaster",
         "type": "address"
@@ -282,6 +301,19 @@
   {
     "inputs": [
       {
+        "internalType": "bool",
+        "name": "_isPrivate",
+        "type": "bool"
+      }
+    ],
+    "name": "changeAccessType",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint256",
         "name": "_amount",
         "type": "uint256"
@@ -455,6 +487,30 @@
         "internalType": "address[]",
         "name": "",
         "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "guildContribution",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -744,7 +800,7 @@
         "type": "address"
       }
     ],
-    "name": "promoNewMaster",
+    "name": "promoteNewMaster",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -896,7 +952,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "guildHallContribution",
+        "name": "contributionPoint",
         "type": "uint256"
       }
     ],
