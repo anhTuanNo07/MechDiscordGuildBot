@@ -111,7 +111,14 @@ export default class GuildBackendsController {
   public async getMembers({ request, response }: HttpContextContract) {
     const wallet = request.param('wallet')
     if (wallet) {
-      const userRecord = await UserBackend.findBy('address', wallet)
+      const userRecord = await Database.from('user_backends')
+        .join('users', 'users.user_id', '=', 'user_backends.discord_id')
+        .where('user_backends.address', wallet)
+        .select('user_backends.*')
+        .select('users.username')
+        .select('users.discriminator')
+        .first()
+
       if (!userRecord) {
         response.notFound({
           statusCode: 404,
@@ -119,10 +126,20 @@ export default class GuildBackendsController {
         })
         return
       }
+
       response.ok({
         statusCode: 200,
         message: 'successfully',
-        data: userRecord,
+        data: {
+          role: userRecord?.role,
+          address: userRecord?.address,
+          discord_id: userRecord?.discord_id,
+          mecha_own: userRecord?.mecha_own,
+          distance: userRecord?.distance,
+          contribution: userRecord?.contribution,
+          guild_point: userRecord?.guild_point,
+          discordAccount: `${userRecord?.username}#${userRecord?.discriminator}`,
+        },
       })
       return
     }
