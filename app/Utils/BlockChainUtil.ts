@@ -14,6 +14,22 @@ export const getMechGuildContract = (): MechGuild =>
   new ethers.Contract(Env.get('MECH_GUILD_CONTRACT'), MechGuildAbi, readOnlyProvider) as MechGuild
 
 // verify signature
+export function verifyLinkDiscordWalletSign({ sig, wallet, discordId, signer }: any): boolean {
+  const types = {
+    LinkDiscordWallet: [
+      { name: 'wallet', type: 'address' },
+      { name: 'discordId', type: 'uint256' },
+    ],
+  }
+
+  const message = {
+    wallet,
+    discordId,
+  }
+
+  return verifySign({ types, message, sig, signer })
+}
+
 export function verifyCreateGuildSign({ sig, isPrivate, nonce, deadline, signer }: any): boolean {
   const types = {
     CreateGuildWithSig: [

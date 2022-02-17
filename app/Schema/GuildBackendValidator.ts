@@ -45,6 +45,7 @@ const joinGuildBackend = {
 }
 
 const updateMemberBackend = {
+  sig: schema.string(),
   address: schema.string(),
   discordId: schema.string.nullable(),
 }

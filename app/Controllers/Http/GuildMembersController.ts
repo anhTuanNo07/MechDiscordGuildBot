@@ -1,5 +1,5 @@
 import Database from '@ioc:Adonis/Lucid/Database'
-import { signer, signJoinGuild } from 'App/Utils/BlockChainUtil'
+import { signer, signJoinGuild, verifyLinkDiscordWalletSign } from 'App/Utils/BlockChainUtil'
 import {
   joinGuildValidator,
   updateMemberValidator,
@@ -7,6 +7,7 @@ import {
 } from 'App/Schema/GuildBackendValidator'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import UserBackend from 'App/Models/UserBackend'
+import { utils } from 'ethers'
 export default class GuildBackendsController {
   // --- Guild members ---
   public async joinGuild({ request, response }: HttpContextContract) {
@@ -67,6 +68,31 @@ export default class GuildBackendsController {
       schema: updateMemberValidator,
       data: request.body(),
     })
+
+    const wallet = utils.getAddress(payload.address)
+    if (
+      !verifyLinkDiscordWalletSign({
+        sig: payload.sig,
+        wallet,
+        discordId: payload.discordId,
+        signer: payload.address,
+      })
+    ) {
+      response.unprocessableEntity({
+        statusCode: 422,
+        message: 'Invalid signature',
+      })
+      return
+    }
+
+    const existed = await UserBackend.findBy('discord_id', payload.discordId)
+    if (existed) {
+      response.unprocessableEntity({
+        statusCode: 422,
+        message: 'Duplicate discord account',
+      })
+      return
+    }
 
     await UserBackend.updateOrCreate(
       { address: payload.address },
