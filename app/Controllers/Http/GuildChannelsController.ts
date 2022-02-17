@@ -17,6 +17,7 @@ import GuildChannel from 'App/Models/GuildChannel'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import GuildBackend from 'App/Models/GuildBackend'
 import RoleChannel from 'App/Models/RoleChannel'
+import { normalizeGuildTag } from 'App/Utils/GuildMembersUtils'
 export default class GuildBackendsController {
   // --- Guild CRUD ---
   public async createGuild({ request, response }: HttpContextContract) {
@@ -54,7 +55,7 @@ export default class GuildBackendsController {
     const currentNonce = await getNonce(payload.guildMaster)
     const data = {
       guildName: payload.guildName,
-      guildTag: payload.guildTag,
+      guildTag: normalizeGuildTag(payload.guildTag),
       guildSymbol: `./tmp/uploads/images/${payload.guildName}.png`,
       guildDescription: payload.guildDescription,
       access: payload.access,
@@ -72,7 +73,7 @@ export default class GuildBackendsController {
       await pendingGuild
         .merge({
           guildName: payload.guildName,
-          guildTag: payload.guildTag,
+          guildTag: normalizeGuildTag(payload.guildTag),
           guildSymbol: `./tmp/uploads/images/${payload.guildName}.png`,
           guildDescription: payload.guildDescription,
           access: payload.access,
@@ -133,6 +134,9 @@ export default class GuildBackendsController {
           members: updateMembers,
           ...payload,
         }
+
+        // normalize guild tag
+        updateData.guildTag = normalizeGuildTag(updateData.guildTag)
 
         // update role name on discord server and backend information
         const roleRecord = await RoleChannel.findBy('role_name', guildRecord.guildName)

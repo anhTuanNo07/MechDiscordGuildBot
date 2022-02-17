@@ -1,9 +1,9 @@
-import { schema } from '@ioc:Adonis/Core/Validator'
+import { schema, rules } from '@ioc:Adonis/Core/Validator'
 
 const createGuildBackend = {
-  guildName: schema.string(),
-  guildTag: schema.string(),
-  guildDescription: schema.string.nullableAndOptional(),
+  guildName: schema.string({}, [rules.maxLength(100)]),
+  guildTag: schema.string({}, [rules.maxLength(5), rules.alpha()]),
+  guildDescription: schema.string.nullableAndOptional({}, [rules.maxLength(200)]),
   access: schema.boolean(),
   region: schema.string(),
   guildMaster: schema.string(),
@@ -12,9 +12,9 @@ const createGuildBackend = {
 
 const updateGuildBackend = {
   guildId: schema.number(),
-  guildName: schema.string(),
-  guildTag: schema.string(),
-  guildDescription: schema.string.nullableAndOptional(),
+  guildName: schema.string({}, [rules.maxLength(100)]),
+  guildTag: schema.string({}, [rules.maxLength(5), rules.alpha()]),
+  guildDescription: schema.string.nullableAndOptional({}, [rules.maxLength(200)]),
   access: schema.boolean(),
   region: schema.string(),
   guildMaster: schema.string(),

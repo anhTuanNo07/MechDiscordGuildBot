@@ -53,3 +53,7 @@ export async function unassignUserRoleOnDiscord(userId: string, roleName: string
   const roleId = roleChannel ? (roleChannel.roleId ? roleChannel.roleId : '') : ''
   await member?.roles.remove(roleId)
 }
+
+export function normalizeGuildTag(guildTag: string) {
+  return guildTag.toUpperCase()
+}
