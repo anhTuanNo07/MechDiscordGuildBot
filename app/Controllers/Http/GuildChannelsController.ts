@@ -109,10 +109,13 @@ export default class GuildBackendsController {
       data: request.body(),
     })
 
-    const imageFile = await request.validate({
-      schema: guildSymbolValidator,
-      data: request.allFiles(),
-    })
+    let imageFile
+    if (request.file('guildSymbol')) {
+      imageFile = await request.validate({
+        schema: guildSymbolValidator,
+        data: request.allFiles(),
+      })
+    }
 
     // update off-chain info
     const guildRecord = await GuildBackend.findBy('guild_id', payload.guildId)
@@ -175,10 +178,12 @@ export default class GuildBackendsController {
       }
     }
 
-    // change filename to guildName
-    await imageFile.guildSymbol.moveToDisk('images', {
-      name: `${payload.guildName}.png`,
-    })
+    // change filename to guildName and save
+    if (imageFile) {
+      await imageFile.guildSymbol.moveToDisk('images', {
+        name: `${payload.guildName}.png`,
+      })
+    }
 
     response.ok({
       statusCode: 200,
