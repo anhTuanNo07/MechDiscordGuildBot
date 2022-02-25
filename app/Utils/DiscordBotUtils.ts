@@ -1,4 +1,6 @@
 import Env from '@ioc:Adonis/Core/Env'
+import GuildChannel from 'App/Models/GuildChannel'
+import RoleChannel from 'App/Models/RoleChannel'
 import {
   Client,
   Collection,
@@ -162,9 +164,90 @@ export async function fetchUsername(
   let returnValue: undefined | GuildMember
 
   discordQuery.forEach((value) => {
-    if (username === value.user.username && discriminator === value.user.discriminator) {
+    if (
+      username?.toLowerCase() === value.user.username?.toLowerCase() &&
+      discriminator === value.user.discriminator
+    ) {
       returnValue = value
     }
   })
   return returnValue
+}
+
+export async function createRole(roleName: string): Promise<string> {
+  const client = await autoLogin()
+  const guild = await getGuild(client)
+  let roleId
+  await guild?.roles
+    .create({
+      name: roleName,
+      color: 'AQUA', // consider set default color in env
+      permissions: Permissions.FLAGS.VIEW_CHANNEL,
+    })
+    .then(async (role) => {
+      // update roles table
+      const roleRecord = await RoleChannel.findBy('role_name', role.name)
+      if (roleRecord) {
+        roleRecord.roleId = role.id
+        await roleRecord.save()
+        roleId = role.id
+      } else {
+        throw new Error(
+          'Create role channel error. Please check the roles table for more information.'
+        )
+      }
+      roleId = role.id
+    })
+  return roleId
+}
+
+export async function createChannel(channelName: string, roleId: Snowflake) {
+  const everyoneRole = Env.get('SERVER_ID')
+  const client = await autoLogin()
+  const guild = await getGuild(client)
+  await guild?.channels
+    .create(`[${Env.get('GUILD_PREFIX')}] - ${channelName}`, {
+      type: 'GUILD_TEXT',
+      reason: 'create guild channel',
+    })
+    .then(async (channel) => {
+      // permission assignments
+      await channel.edit({
+        permissionOverwrites: [
+          {
+            id: everyoneRole,
+            deny: [Permissions.FLAGS.VIEW_CHANNEL],
+          },
+          {
+            id: roleId, // assign role for channel
+            allow: [Permissions.FLAGS.VIEW_CHANNEL],
+          },
+        ],
+      })
+      // put into guild category
+      await channel.setParent(Env.get('GUILD_CATEGORY'), { lockPermissions: false })
+
+      const guild = await GuildChannel.findBy('guild_name', channelName)
+      if (guild) {
+        guild.guildId = channel.id
+        await guild.save()
+      } else {
+        throw new Error(
+          'Create guild channel error. Please check guilds table for more information'
+        )
+      }
+    })
+}
+
+export async function changeRoleName(roleId: string, roleName: string) {
+  const client = await autoLogin()
+  const guild = await getGuild(client)
+  await guild?.roles.edit(roleId, { name: roleName })
+}
+
+export async function changeChannelName(channelId: string, channelName: string) {
+  const client = await autoLogin()
+  const guild = await getGuild(client)
+  const channel = await guild?.channels.cache.get(channelId)
+  await channel?.edit({ name: `[${Env.get('GUILD_PREFIX')}] - ${channelName}` })
 }

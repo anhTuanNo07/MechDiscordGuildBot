@@ -1,15 +1,24 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
 
-export default class RoleChannel extends BaseModel {
+export enum WebhookProcessStatus {
+  Created,
+  Done,
+  Error,
+}
+
+export default class WebhookLog extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
   @column()
-  public roleName: string
+  public data: string
 
   @column()
-  public roleId: string | null
+  public status: WebhookProcessStatus
+
+  @column()
+  public txHash: string
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

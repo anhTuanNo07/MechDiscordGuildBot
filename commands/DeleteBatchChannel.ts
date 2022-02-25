@@ -85,7 +85,6 @@ export default class DeleteBatchChannel extends BaseCommand {
               const guild = await GuildChannel.findBy('guild_name', channel.name)
               if (guild) {
                 guild.guildId = null
-                guild.generatedChannel = false
                 await guild.save()
                 this.logger.info(`Delete guild channel '${channel.name}' successfully.`)
               } else {

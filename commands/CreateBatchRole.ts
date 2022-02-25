@@ -80,7 +80,6 @@ export default class CreateBatchRole extends BaseCommand {
               const roleRecord = await RoleChannel.findBy('role_name', role.name)
               if (roleRecord) {
                 roleRecord.roleId = role.id
-                roleRecord.generatedRole = true
                 await roleRecord.save()
                 this.logger.info(`Create role channel '${role.name}' successfully.`)
               } else {

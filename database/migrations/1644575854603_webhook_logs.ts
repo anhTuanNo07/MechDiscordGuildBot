@@ -1,13 +1,14 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema'
 
-export default class GuildChannels extends BaseSchema {
-  protected tableName = 'guild_channels'
+export default class WebhookLogs extends BaseSchema {
+  protected tableName = 'webhook_logs'
 
   public async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
-      table.text('guild_name').notNullable().unique()
-      table.text('guild_id').unique()
+
+      table.text('data')
+      table.integer('status').defaultTo(0)
 
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL

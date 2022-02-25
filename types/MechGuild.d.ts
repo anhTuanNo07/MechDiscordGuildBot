@@ -2,2161 +2,2580 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { ethers, EventFilter, Signer, BigNumber, BigNumberish, PopulatedTransaction } from 'ethers'
-import { Contract, ContractTransaction, Overrides, CallOverrides } from '@ethersproject/contracts'
-import { BytesLike } from '@ethersproject/bytes'
-import { Listener, Provider } from '@ethersproject/providers'
-import { FunctionFragment, EventFragment, Result } from '@ethersproject/abi'
+import {
+  ethers,
+  EventFilter,
+  Signer,
+  BigNumber,
+  BigNumberish,
+  PopulatedTransaction,
+} from "ethers";
+import {
+  Contract,
+  ContractTransaction,
+  Overrides,
+  CallOverrides,
+} from "@ethersproject/contracts";
+import { BytesLike } from "@ethersproject/bytes";
+import { Listener, Provider } from "@ethersproject/providers";
+import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface MechGuildInterface extends ethers.utils.Interface {
   functions: {
-    'CREATE_GUILD_WITH_SIG_TYPEHASH()': FunctionFragment
-    'GUILD_HALL_ID()': FunctionFragment
-    'JOIN_GUILD_WITH_SIG_TYPEHASH()': FunctionFragment
-    'NITRO_LAB_ID()': FunctionFragment
-    '__MechaGuild_init(address,address,uint256,address,address,address)': FunctionFragment
-    'acceptJoinRequest(address[])': FunctionFragment
-    'changeGuildMaster(address)': FunctionFragment
-    'claimNitro()': FunctionFragment
-    'contributeGuildBase(uint256,uint256)': FunctionFragment
-    'createGuildFee()': FunctionFragment
-    'createGuildMaterial()': FunctionFragment
-    'createGuildSigNonces(address)': FunctionFragment
-    'createGuildWithSig(bool,tuple)': FunctionFragment
-    'fundingWallet()': FunctionFragment
-    'getCurrentBuildingLevel(uint256,uint256)': FunctionFragment
-    'getEthSignedMessageHash(bytes32)': FunctionFragment
-    'getMemberOfGuild(uint256)': FunctionFragment
-    'getPendingMemberOfGuild(uint256)': FunctionFragment
-    'getSignerAddress(bytes32,bytes)': FunctionFragment
-    'guildCount()': FunctionFragment
-    'guildHall(uint256)': FunctionFragment
-    'guildHallSetting(uint256,uint256)': FunctionFragment
-    'guilds(uint256)': FunctionFragment
-    'joinGuildSigNonces(address)': FunctionFragment
-    'joinGuildWithSig(uint256,tuple)': FunctionFragment
-    'kickMember(address)': FunctionFragment
-    'materialContract()': FunctionFragment
-    'materialID()': FunctionFragment
-    'maxGuildHallLevel()': FunctionFragment
-    'maxNitroLabLevel()': FunctionFragment
-    'mechContract()': FunctionFragment
-    'nitroContract()': FunctionFragment
-    'nitroLab(uint256)': FunctionFragment
-    'nitroLabSetting(uint256,uint256)': FunctionFragment
-    'nitroProductionFee()': FunctionFragment
-    'outOfGuild()': FunctionFragment
-    'owner()': FunctionFragment
-    'penaltyTime()': FunctionFragment
-    'produceNitro()': FunctionFragment
-    'renounceOwnership()': FunctionFragment
-    'setSigner(address)': FunctionFragment
-    'transferOwnership(address)': FunctionFragment
-    'upgradeBuilding(uint256)': FunctionFragment
-    'users(address)': FunctionFragment
-  }
+    "CREATE_GUILD_WITH_SIG_TYPEHASH()": FunctionFragment;
+    "JOIN_GUILD_WITH_SIG_TYPEHASH()": FunctionFragment;
+    "__MechaGuild_init(address,uint256,address,address,address)": FunctionFragment;
+    "acceptJoinRequest(address[])": FunctionFragment;
+    "cancelJoinRequest()": FunctionFragment;
+    "changeAccessType(bool)": FunctionFragment;
+    "contributeGuildBase(uint256)": FunctionFragment;
+    "createGuildSigNonces(address)": FunctionFragment;
+    "createGuildWithSig(bool,tuple)": FunctionFragment;
+    "createMaterialFee()": FunctionFragment;
+    "createTokenFee()": FunctionFragment;
+    "denyJoinRequest(address[])": FunctionFragment;
+    "fundingWallet()": FunctionFragment;
+    "getCurrentBuildingLevel(uint256)": FunctionFragment;
+    "getMemberOfGuild(uint256)": FunctionFragment;
+    "getPendingMemberOfGuild(uint256)": FunctionFragment;
+    "guildContribution(uint256,address)": FunctionFragment;
+    "guildCount()": FunctionFragment;
+    "guildHallSettings(uint256,uint256)": FunctionFragment;
+    "guildHalls(uint256)": FunctionFragment;
+    "guilds(uint256)": FunctionFragment;
+    "increaseMaxGuildHallLevel(uint256,uint256,uint256)": FunctionFragment;
+    "joinGuildSigNonces(address)": FunctionFragment;
+    "joinGuildWithSig(uint256,tuple)": FunctionFragment;
+    "kickMember(address)": FunctionFragment;
+    "materialContract()": FunctionFragment;
+    "materialID()": FunctionFragment;
+    "maxGuildHallLevel()": FunctionFragment;
+    "outOfGuild()": FunctionFragment;
+    "owner()": FunctionFragment;
+    "penaltyTime()": FunctionFragment;
+    "pendingRequests(address)": FunctionFragment;
+    "promoteNewMaster(address)": FunctionFragment;
+    "renounceOwnership()": FunctionFragment;
+    "setCreateFee(uint256,uint256)": FunctionFragment;
+    "setFundingWallet(address)": FunctionFragment;
+    "setGuildHallLevelSetting(uint256,uint256,uint256,uint256)": FunctionFragment;
+    "setPenaltyTime(uint256)": FunctionFragment;
+    "setSigner(address)": FunctionFragment;
+    "tokenContract()": FunctionFragment;
+    "transferOwnership(address)": FunctionFragment;
+    "upgradeBuilding()": FunctionFragment;
+    "users(address)": FunctionFragment;
+  };
 
-  encodeFunctionData(functionFragment: 'CREATE_GUILD_WITH_SIG_TYPEHASH', values?: undefined): string
-  encodeFunctionData(functionFragment: 'GUILD_HALL_ID', values?: undefined): string
-  encodeFunctionData(functionFragment: 'JOIN_GUILD_WITH_SIG_TYPEHASH', values?: undefined): string
-  encodeFunctionData(functionFragment: 'NITRO_LAB_ID', values?: undefined): string
   encodeFunctionData(
-    functionFragment: '__MechaGuild_init',
-    values: [string, string, BigNumberish, string, string, string]
-  ): string
-  encodeFunctionData(functionFragment: 'acceptJoinRequest', values: [string[]]): string
-  encodeFunctionData(functionFragment: 'changeGuildMaster', values: [string]): string
-  encodeFunctionData(functionFragment: 'claimNitro', values?: undefined): string
+    functionFragment: "CREATE_GUILD_WITH_SIG_TYPEHASH",
+    values?: undefined
+  ): string;
   encodeFunctionData(
-    functionFragment: 'contributeGuildBase',
+    functionFragment: "JOIN_GUILD_WITH_SIG_TYPEHASH",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "__MechaGuild_init",
+    values: [string, BigNumberish, string, string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "acceptJoinRequest",
+    values: [string[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "cancelJoinRequest",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "changeAccessType",
+    values: [boolean]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "contributeGuildBase",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "createGuildSigNonces",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "createGuildWithSig",
+    values: [
+      boolean,
+      { deadline: BigNumberish; v: BigNumberish; r: BytesLike; s: BytesLike }
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "createMaterialFee",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "createTokenFee",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "denyJoinRequest",
+    values: [string[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "fundingWallet",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getCurrentBuildingLevel",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getMemberOfGuild",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getPendingMemberOfGuild",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "guildContribution",
+    values: [BigNumberish, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "guildCount",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "guildHallSettings",
     values: [BigNumberish, BigNumberish]
-  ): string
-  encodeFunctionData(functionFragment: 'createGuildFee', values?: undefined): string
-  encodeFunctionData(functionFragment: 'createGuildMaterial', values?: undefined): string
-  encodeFunctionData(functionFragment: 'createGuildSigNonces', values: [string]): string
+  ): string;
   encodeFunctionData(
-    functionFragment: 'createGuildWithSig',
-    values: [boolean, { deadline: BigNumberish; v: BigNumberish; r: BytesLike; s: BytesLike }]
-  ): string
-  encodeFunctionData(functionFragment: 'fundingWallet', values?: undefined): string
+    functionFragment: "guildHalls",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(
-    functionFragment: 'getCurrentBuildingLevel',
+    functionFragment: "guilds",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "increaseMaxGuildHallLevel",
+    values: [BigNumberish, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "joinGuildSigNonces",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "joinGuildWithSig",
+    values: [
+      BigNumberish,
+      { deadline: BigNumberish; v: BigNumberish; r: BytesLike; s: BytesLike }
+    ]
+  ): string;
+  encodeFunctionData(functionFragment: "kickMember", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "materialContract",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "materialID",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "maxGuildHallLevel",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "outOfGuild",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "penaltyTime",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "pendingRequests",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "promoteNewMaster",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "renounceOwnership",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setCreateFee",
     values: [BigNumberish, BigNumberish]
-  ): string
-  encodeFunctionData(functionFragment: 'getEthSignedMessageHash', values: [BytesLike]): string
-  encodeFunctionData(functionFragment: 'getMemberOfGuild', values: [BigNumberish]): string
-  encodeFunctionData(functionFragment: 'getPendingMemberOfGuild', values: [BigNumberish]): string
-  encodeFunctionData(functionFragment: 'getSignerAddress', values: [BytesLike, BytesLike]): string
-  encodeFunctionData(functionFragment: 'guildCount', values?: undefined): string
-  encodeFunctionData(functionFragment: 'guildHall', values: [BigNumberish]): string
+  ): string;
   encodeFunctionData(
-    functionFragment: 'guildHallSetting',
-    values: [BigNumberish, BigNumberish]
-  ): string
-  encodeFunctionData(functionFragment: 'guilds', values: [BigNumberish]): string
-  encodeFunctionData(functionFragment: 'joinGuildSigNonces', values: [string]): string
+    functionFragment: "setFundingWallet",
+    values: [string]
+  ): string;
   encodeFunctionData(
-    functionFragment: 'joinGuildWithSig',
-    values: [BigNumberish, { deadline: BigNumberish; v: BigNumberish; r: BytesLike; s: BytesLike }]
-  ): string
-  encodeFunctionData(functionFragment: 'kickMember', values: [string]): string
-  encodeFunctionData(functionFragment: 'materialContract', values?: undefined): string
-  encodeFunctionData(functionFragment: 'materialID', values?: undefined): string
-  encodeFunctionData(functionFragment: 'maxGuildHallLevel', values?: undefined): string
-  encodeFunctionData(functionFragment: 'maxNitroLabLevel', values?: undefined): string
-  encodeFunctionData(functionFragment: 'mechContract', values?: undefined): string
-  encodeFunctionData(functionFragment: 'nitroContract', values?: undefined): string
-  encodeFunctionData(functionFragment: 'nitroLab', values: [BigNumberish]): string
+    functionFragment: "setGuildHallLevelSetting",
+    values: [BigNumberish, BigNumberish, BigNumberish, BigNumberish]
+  ): string;
   encodeFunctionData(
-    functionFragment: 'nitroLabSetting',
-    values: [BigNumberish, BigNumberish]
-  ): string
-  encodeFunctionData(functionFragment: 'nitroProductionFee', values?: undefined): string
-  encodeFunctionData(functionFragment: 'outOfGuild', values?: undefined): string
-  encodeFunctionData(functionFragment: 'owner', values?: undefined): string
-  encodeFunctionData(functionFragment: 'penaltyTime', values?: undefined): string
-  encodeFunctionData(functionFragment: 'produceNitro', values?: undefined): string
-  encodeFunctionData(functionFragment: 'renounceOwnership', values?: undefined): string
-  encodeFunctionData(functionFragment: 'setSigner', values: [string]): string
-  encodeFunctionData(functionFragment: 'transferOwnership', values: [string]): string
-  encodeFunctionData(functionFragment: 'upgradeBuilding', values: [BigNumberish]): string
-  encodeFunctionData(functionFragment: 'users', values: [string]): string
+    functionFragment: "setPenaltyTime",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "setSigner", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "tokenContract",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transferOwnership",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "upgradeBuilding",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "users", values: [string]): string;
 
-  decodeFunctionResult(functionFragment: 'CREATE_GUILD_WITH_SIG_TYPEHASH', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'GUILD_HALL_ID', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'JOIN_GUILD_WITH_SIG_TYPEHASH', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'NITRO_LAB_ID', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: '__MechaGuild_init', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'acceptJoinRequest', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'changeGuildMaster', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'claimNitro', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'contributeGuildBase', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'createGuildFee', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'createGuildMaterial', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'createGuildSigNonces', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'createGuildWithSig', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'fundingWallet', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'getCurrentBuildingLevel', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'getEthSignedMessageHash', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'getMemberOfGuild', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'getPendingMemberOfGuild', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'getSignerAddress', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'guildCount', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'guildHall', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'guildHallSetting', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'guilds', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'joinGuildSigNonces', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'joinGuildWithSig', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'kickMember', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'materialContract', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'materialID', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'maxGuildHallLevel', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'maxNitroLabLevel', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'mechContract', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'nitroContract', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'nitroLab', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'nitroLabSetting', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'nitroProductionFee', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'outOfGuild', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'penaltyTime', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'produceNitro', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'renounceOwnership', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'setSigner', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'transferOwnership', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'upgradeBuilding', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'users', data: BytesLike): Result
+  decodeFunctionResult(
+    functionFragment: "CREATE_GUILD_WITH_SIG_TYPEHASH",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "JOIN_GUILD_WITH_SIG_TYPEHASH",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "__MechaGuild_init",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "acceptJoinRequest",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "cancelJoinRequest",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "changeAccessType",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "contributeGuildBase",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "createGuildSigNonces",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "createGuildWithSig",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "createMaterialFee",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "createTokenFee",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "denyJoinRequest",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "fundingWallet",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getCurrentBuildingLevel",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getMemberOfGuild",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getPendingMemberOfGuild",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "guildContribution",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "guildCount", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "guildHallSettings",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "guildHalls", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "guilds", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "increaseMaxGuildHallLevel",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "joinGuildSigNonces",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "joinGuildWithSig",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "kickMember", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "materialContract",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "materialID", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "maxGuildHallLevel",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "outOfGuild", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "penaltyTime",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "pendingRequests",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "promoteNewMaster",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setCreateFee",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setFundingWallet",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setGuildHallLevelSetting",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setPenaltyTime",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "setSigner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "tokenContract",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "upgradeBuilding",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "users", data: BytesLike): Result;
 
   events: {
-    'ChangedGuildMaster(uint256,address,address)': EventFragment
-    'ClaimedNitro(uint256,address)': EventFragment
-    'ContributeGuildHall(uint256,address,uint256)': EventFragment
-    'ContributeNitroLab(uint256,address,uint256)': EventFragment
-    'CreatedGuild(uint256,address,bool)': EventFragment
-    'Joined(uint256,address)': EventFragment
-    'OutOfGuild(uint256,address)': EventFragment
-    'OwnershipTransferred(address,address)': EventFragment
-    'ProduceNitro(uint256,address,uint256)': EventFragment
-    'RequestToJoin(uint256,address)': EventFragment
-    'UpgradeGuildHall(uint256,uint256,uint256)': EventFragment
-    'UpgradeNitroLab(uint256,uint256,uint256)': EventFragment
-  }
+    "GuildAccessChanged(uint256,bool)": EventFragment;
+    "GuildCreated(uint256,address,uint256,bool)": EventFragment;
+    "GuildHallContributed(uint256,address,uint256)": EventFragment;
+    "GuildHallUpgraded(uint256,uint256,uint256)": EventFragment;
+    "GuildMasterChanged(uint256,address,address)": EventFragment;
+    "Joined(uint256,address)": EventFragment;
+    "OutOfGuild(uint256,address)": EventFragment;
+    "OwnershipTransferred(address,address)": EventFragment;
+    "RequestCanceled(uint256,address)": EventFragment;
+    "RequestToJoin(uint256,address)": EventFragment;
+  };
 
-  getEvent(nameOrSignatureOrTopic: 'ChangedGuildMaster'): EventFragment
-  getEvent(nameOrSignatureOrTopic: 'ClaimedNitro'): EventFragment
-  getEvent(nameOrSignatureOrTopic: 'ContributeGuildHall'): EventFragment
-  getEvent(nameOrSignatureOrTopic: 'ContributeNitroLab'): EventFragment
-  getEvent(nameOrSignatureOrTopic: 'CreatedGuild'): EventFragment
-  getEvent(nameOrSignatureOrTopic: 'Joined'): EventFragment
-  getEvent(nameOrSignatureOrTopic: 'OutOfGuild'): EventFragment
-  getEvent(nameOrSignatureOrTopic: 'OwnershipTransferred'): EventFragment
-  getEvent(nameOrSignatureOrTopic: 'ProduceNitro'): EventFragment
-  getEvent(nameOrSignatureOrTopic: 'RequestToJoin'): EventFragment
-  getEvent(nameOrSignatureOrTopic: 'UpgradeGuildHall'): EventFragment
-  getEvent(nameOrSignatureOrTopic: 'UpgradeNitroLab'): EventFragment
+  getEvent(nameOrSignatureOrTopic: "GuildAccessChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "GuildCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "GuildHallContributed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "GuildHallUpgraded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "GuildMasterChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Joined"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OutOfGuild"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RequestCanceled"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RequestToJoin"): EventFragment;
 }
 
 export class MechGuild extends Contract {
-  'connect'(signerOrProvider: Signer | Provider | string): this
-  'attach'(addressOrName: string): this
-  'deployed'(): Promise<this>
+  connect(signerOrProvider: Signer | Provider | string): this;
+  attach(addressOrName: string): this;
+  deployed(): Promise<this>;
 
-  'on'(event: EventFilter | string, listener: Listener): this
-  'once'(event: EventFilter | string, listener: Listener): this
-  'addListener'(eventName: EventFilter | string, listener: Listener): this
-  'removeAllListeners'(eventName: EventFilter | string): this
-  'removeListener'(eventName: any, listener: Listener): this
+  on(event: EventFilter | string, listener: Listener): this;
+  once(event: EventFilter | string, listener: Listener): this;
+  addListener(eventName: EventFilter | string, listener: Listener): this;
+  removeAllListeners(eventName: EventFilter | string): this;
+  removeListener(eventName: any, listener: Listener): this;
 
-  'interface': MechGuildInterface
+  interface: MechGuildInterface;
 
-  'functions': {
-    CREATE_GUILD_WITH_SIG_TYPEHASH(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string
-    }>
+  functions: {
+    CREATE_GUILD_WITH_SIG_TYPEHASH(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    'CREATE_GUILD_WITH_SIG_TYPEHASH()'(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string
-    }>
+    "CREATE_GUILD_WITH_SIG_TYPEHASH()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    GUILD_HALL_ID(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber
-    }>
+    JOIN_GUILD_WITH_SIG_TYPEHASH(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    'GUILD_HALL_ID()'(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber
-    }>
-
-    JOIN_GUILD_WITH_SIG_TYPEHASH(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string
-    }>
-
-    'JOIN_GUILD_WITH_SIG_TYPEHASH()'(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string
-    }>
-
-    NITRO_LAB_ID(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber
-    }>
-
-    'NITRO_LAB_ID()'(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber
-    }>
+    "JOIN_GUILD_WITH_SIG_TYPEHASH()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
     __MechaGuild_init(
-      _nitroContract: string,
       _materialContract: string,
       _materialId: BigNumberish,
-      _mechContract: string,
+      _tokenContract: string,
       _fundingWallet: string,
       _signer: string,
       overrides?: Overrides
-    ): Promise<ContractTransaction>
+    ): Promise<ContractTransaction>;
 
-    '__MechaGuild_init(address,address,uint256,address,address,address)'(
-      _nitroContract: string,
+    "__MechaGuild_init(address,uint256,address,address,address)"(
       _materialContract: string,
       _materialId: BigNumberish,
-      _mechContract: string,
+      _tokenContract: string,
       _fundingWallet: string,
       _signer: string,
       overrides?: Overrides
-    ): Promise<ContractTransaction>
+    ): Promise<ContractTransaction>;
 
-    acceptJoinRequest(members: string[], overrides?: Overrides): Promise<ContractTransaction>
-
-    'acceptJoinRequest(address[])'(
-      members: string[],
+    acceptJoinRequest(
+      _members: string[],
       overrides?: Overrides
-    ): Promise<ContractTransaction>
+    ): Promise<ContractTransaction>;
 
-    changeGuildMaster(newMaster: string, overrides?: Overrides): Promise<ContractTransaction>
-
-    'changeGuildMaster(address)'(
-      newMaster: string,
+    "acceptJoinRequest(address[])"(
+      _members: string[],
       overrides?: Overrides
-    ): Promise<ContractTransaction>
+    ): Promise<ContractTransaction>;
 
-    claimNitro(overrides?: Overrides): Promise<ContractTransaction>
+    cancelJoinRequest(overrides?: Overrides): Promise<ContractTransaction>;
 
-    'claimNitro()'(overrides?: Overrides): Promise<ContractTransaction>
+    "cancelJoinRequest()"(overrides?: Overrides): Promise<ContractTransaction>;
+
+    changeAccessType(
+      _isPrivate: boolean,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "changeAccessType(bool)"(
+      _isPrivate: boolean,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
     contributeGuildBase(
-      buildingType: BigNumberish,
-      amount: BigNumberish,
+      _amount: BigNumberish,
       overrides?: Overrides
-    ): Promise<ContractTransaction>
+    ): Promise<ContractTransaction>;
 
-    'contributeGuildBase(uint256,uint256)'(
-      buildingType: BigNumberish,
-      amount: BigNumberish,
+    "contributeGuildBase(uint256)"(
+      _amount: BigNumberish,
       overrides?: Overrides
-    ): Promise<ContractTransaction>
-
-    createGuildFee(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber
-    }>
-
-    'createGuildFee()'(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber
-    }>
-
-    createGuildMaterial(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber
-    }>
-
-    'createGuildMaterial()'(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber
-    }>
+    ): Promise<ContractTransaction>;
 
     createGuildSigNonces(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<{
-      0: BigNumber
-    }>
+      0: BigNumber;
+    }>;
 
-    'createGuildSigNonces(address)'(
+    "createGuildSigNonces(address)"(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<{
-      0: BigNumber
-    }>
+      0: BigNumber;
+    }>;
 
     createGuildWithSig(
-      isPrivate: boolean,
-      sig_: {
-        deadline: BigNumberish
-        v: BigNumberish
-        r: BytesLike
-        s: BytesLike
+      _isPrivate: boolean,
+      _sig: {
+        deadline: BigNumberish;
+        v: BigNumberish;
+        r: BytesLike;
+        s: BytesLike;
       },
       overrides?: Overrides
-    ): Promise<ContractTransaction>
+    ): Promise<ContractTransaction>;
 
-    'createGuildWithSig(bool,tuple)'(
-      isPrivate: boolean,
-      sig_: {
-        deadline: BigNumberish
-        v: BigNumberish
-        r: BytesLike
-        s: BytesLike
+    "createGuildWithSig(bool,tuple)"(
+      _isPrivate: boolean,
+      _sig: {
+        deadline: BigNumberish;
+        v: BigNumberish;
+        r: BytesLike;
+        s: BytesLike;
       },
       overrides?: Overrides
-    ): Promise<ContractTransaction>
+    ): Promise<ContractTransaction>;
 
-    fundingWallet(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string
-    }>
+    createMaterialFee(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    'fundingWallet()'(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string
-    }>
+    "createMaterialFee()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    createTokenFee(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    "createTokenFee()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    denyJoinRequest(
+      _members: string[],
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "denyJoinRequest(address[])"(
+      _members: string[],
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    fundingWallet(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    "fundingWallet()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
     getCurrentBuildingLevel(
       guildId: BigNumberish,
-      buildingType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<{
-      0: BigNumber
-    }>
+      0: BigNumber;
+    }>;
 
-    'getCurrentBuildingLevel(uint256,uint256)'(
+    "getCurrentBuildingLevel(uint256)"(
       guildId: BigNumberish,
-      buildingType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<{
-      0: BigNumber
-    }>
-
-    getEthSignedMessageHash(
-      _messageHash: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string
-    }>
-
-    'getEthSignedMessageHash(bytes32)'(
-      _messageHash: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string
-    }>
+      0: BigNumber;
+    }>;
 
     getMemberOfGuild(
       guildId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<{
-      0: string[]
-    }>
+      0: string[];
+    }>;
 
-    'getMemberOfGuild(uint256)'(
+    "getMemberOfGuild(uint256)"(
       guildId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<{
-      0: string[]
-    }>
+      0: string[];
+    }>;
 
     getPendingMemberOfGuild(
       guildId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<{
-      0: string[]
-    }>
+      0: string[];
+    }>;
 
-    'getPendingMemberOfGuild(uint256)'(
+    "getPendingMemberOfGuild(uint256)"(
       guildId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<{
-      0: string[]
-    }>
+      0: string[];
+    }>;
 
-    getSignerAddress(
-      _messageHash: BytesLike,
-      _signature: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string
-    }>
-
-    'getSignerAddress(bytes32,bytes)'(
-      _messageHash: BytesLike,
-      _signature: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string
-    }>
-
-    guildCount(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber
-    }>
-
-    'guildCount()'(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber
-    }>
-
-    guildHall(
+    guildContribution(
       arg0: BigNumberish,
+      arg1: string,
       overrides?: CallOverrides
     ): Promise<{
-      materials: BigNumber
-      level: BigNumber
-      completedTime: BigNumber
-      0: BigNumber
-      1: BigNumber
-      2: BigNumber
-    }>
+      0: BigNumber;
+    }>;
 
-    'guildHall(uint256)'(
+    "guildContribution(uint256,address)"(
       arg0: BigNumberish,
+      arg1: string,
       overrides?: CallOverrides
     ): Promise<{
-      materials: BigNumber
-      level: BigNumber
-      completedTime: BigNumber
-      0: BigNumber
-      1: BigNumber
-      2: BigNumber
-    }>
+      0: BigNumber;
+    }>;
 
-    guildHallSetting(
+    guildCount(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    "guildCount()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    guildHallSettings(
       arg0: BigNumberish,
       arg1: BigNumberish,
       overrides?: CallOverrides
     ): Promise<{
-      0: BigNumber
-    }>
+      0: BigNumber;
+    }>;
 
-    'guildHallSetting(uint256,uint256)'(
+    "guildHallSettings(uint256,uint256)"(
       arg0: BigNumberish,
       arg1: BigNumberish,
       overrides?: CallOverrides
     ): Promise<{
-      0: BigNumber
-    }>
+      0: BigNumber;
+    }>;
+
+    guildHalls(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<{
+      materials: BigNumber;
+      level: BigNumber;
+      completedTime: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+    }>;
+
+    "guildHalls(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<{
+      materials: BigNumber;
+      level: BigNumber;
+      completedTime: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+    }>;
 
     guilds(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<{
-      master: string
-      isPrivate: boolean
-      0: string
-      1: boolean
-    }>
+      master: string;
+      isPrivate: boolean;
+      0: string;
+      1: boolean;
+    }>;
 
-    'guilds(uint256)'(
+    "guilds(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<{
-      master: string
-      isPrivate: boolean
-      0: string
-      1: boolean
-    }>
+      master: string;
+      isPrivate: boolean;
+      0: string;
+      1: boolean;
+    }>;
+
+    increaseMaxGuildHallLevel(
+      _maxMember: BigNumberish,
+      _upgradeTime: BigNumberish,
+      _cost: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "increaseMaxGuildHallLevel(uint256,uint256,uint256)"(
+      _maxMember: BigNumberish,
+      _upgradeTime: BigNumberish,
+      _cost: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
     joinGuildSigNonces(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<{
-      0: BigNumber
-    }>
+      0: BigNumber;
+    }>;
 
-    'joinGuildSigNonces(address)'(
+    "joinGuildSigNonces(address)"(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<{
-      0: BigNumber
-    }>
+      0: BigNumber;
+    }>;
 
     joinGuildWithSig(
-      guildId: BigNumberish,
-      sig_: {
-        deadline: BigNumberish
-        v: BigNumberish
-        r: BytesLike
-        s: BytesLike
+      _guildId: BigNumberish,
+      _sig: {
+        deadline: BigNumberish;
+        v: BigNumberish;
+        r: BytesLike;
+        s: BytesLike;
       },
       overrides?: Overrides
-    ): Promise<ContractTransaction>
+    ): Promise<ContractTransaction>;
 
-    'joinGuildWithSig(uint256,tuple)'(
-      guildId: BigNumberish,
-      sig_: {
-        deadline: BigNumberish
-        v: BigNumberish
-        r: BytesLike
-        s: BytesLike
+    "joinGuildWithSig(uint256,tuple)"(
+      _guildId: BigNumberish,
+      _sig: {
+        deadline: BigNumberish;
+        v: BigNumberish;
+        r: BytesLike;
+        s: BytesLike;
       },
       overrides?: Overrides
-    ): Promise<ContractTransaction>
+    ): Promise<ContractTransaction>;
 
-    kickMember(memberAddress: string, overrides?: Overrides): Promise<ContractTransaction>
-
-    'kickMember(address)'(
-      memberAddress: string,
+    kickMember(
+      _member: string,
       overrides?: Overrides
-    ): Promise<ContractTransaction>
+    ): Promise<ContractTransaction>;
 
-    materialContract(
+    "kickMember(address)"(
+      _member: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    materialContract(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    "materialContract()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    materialID(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    "materialID()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    maxGuildHallLevel(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    "maxGuildHallLevel()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    outOfGuild(overrides?: Overrides): Promise<ContractTransaction>;
+
+    "outOfGuild()"(overrides?: Overrides): Promise<ContractTransaction>;
+
+    owner(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    "owner()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    penaltyTime(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    "penaltyTime()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    pendingRequests(
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<{
-      0: string
-    }>
+      0: BigNumber;
+    }>;
 
-    'materialContract()'(
+    "pendingRequests(address)"(
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<{
-      0: string
-    }>
+      0: BigNumber;
+    }>;
 
-    materialID(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber
-    }>
+    promoteNewMaster(
+      _newMaster: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
-    'materialID()'(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber
-    }>
+    "promoteNewMaster(address)"(
+      _newMaster: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
-    maxGuildHallLevel(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber
-    }>
+    renounceOwnership(overrides?: Overrides): Promise<ContractTransaction>;
 
-    'maxGuildHallLevel()'(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber
-    }>
+    "renounceOwnership()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-    maxNitroLabLevel(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber
-    }>
+    setCreateFee(
+      _tokenFee: BigNumberish,
+      _materialFee: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
-    'maxNitroLabLevel()'(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber
-    }>
+    "setCreateFee(uint256,uint256)"(
+      _tokenFee: BigNumberish,
+      _materialFee: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
-    mechContract(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string
-    }>
+    setFundingWallet(
+      _fundingWallet: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
-    'mechContract()'(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string
-    }>
+    "setFundingWallet(address)"(
+      _fundingWallet: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
-    nitroContract(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string
-    }>
+    setGuildHallLevelSetting(
+      _level: BigNumberish,
+      _maxMember: BigNumberish,
+      _upgradeTime: BigNumberish,
+      _cost: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
-    'nitroContract()'(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string
-    }>
+    "setGuildHallLevelSetting(uint256,uint256,uint256,uint256)"(
+      _level: BigNumberish,
+      _maxMember: BigNumberish,
+      _upgradeTime: BigNumberish,
+      _cost: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
-    nitroLab(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<{
-      materials: BigNumber
-      level: BigNumber
-      completedTime: BigNumber
-      0: BigNumber
-      1: BigNumber
-      2: BigNumber
-    }>
+    setPenaltyTime(
+      _penaltyTime: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
-    'nitroLab(uint256)'(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<{
-      materials: BigNumber
-      level: BigNumber
-      completedTime: BigNumber
-      0: BigNumber
-      1: BigNumber
-      2: BigNumber
-    }>
+    "setPenaltyTime(uint256)"(
+      _penaltyTime: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
-    nitroLabSetting(
-      arg0: BigNumberish,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber
-    }>
+    setSigner(
+      _signer: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
-    'nitroLabSetting(uint256,uint256)'(
-      arg0: BigNumberish,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber
-    }>
+    "setSigner(address)"(
+      _signer: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
-    nitroProductionFee(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber
-    }>
+    tokenContract(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    'nitroProductionFee()'(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber
-    }>
+    "tokenContract()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    outOfGuild(overrides?: Overrides): Promise<ContractTransaction>
-
-    'outOfGuild()'(overrides?: Overrides): Promise<ContractTransaction>
-
-    owner(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string
-    }>
-
-    'owner()'(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string
-    }>
-
-    penaltyTime(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber
-    }>
-
-    'penaltyTime()'(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber
-    }>
-
-    produceNitro(overrides?: Overrides): Promise<ContractTransaction>
-
-    'produceNitro()'(overrides?: Overrides): Promise<ContractTransaction>
-
-    renounceOwnership(overrides?: Overrides): Promise<ContractTransaction>
-
-    'renounceOwnership()'(overrides?: Overrides): Promise<ContractTransaction>
-
-    setSigner(_signer: string, overrides?: Overrides): Promise<ContractTransaction>
-
-    'setSigner(address)'(_signer: string, overrides?: Overrides): Promise<ContractTransaction>
-
-    transferOwnership(newOwner: string, overrides?: Overrides): Promise<ContractTransaction>
-
-    'transferOwnership(address)'(
+    transferOwnership(
       newOwner: string,
       overrides?: Overrides
-    ): Promise<ContractTransaction>
+    ): Promise<ContractTransaction>;
 
-    upgradeBuilding(buildingType: BigNumberish, overrides?: Overrides): Promise<ContractTransaction>
-
-    'upgradeBuilding(uint256)'(
-      buildingType: BigNumberish,
+    "transferOwnership(address)"(
+      newOwner: string,
       overrides?: Overrides
-    ): Promise<ContractTransaction>
+    ): Promise<ContractTransaction>;
+
+    upgradeBuilding(overrides?: Overrides): Promise<ContractTransaction>;
+
+    "upgradeBuilding()"(overrides?: Overrides): Promise<ContractTransaction>;
 
     users(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<{
-      guildId: BigNumber
-      lastOutOfGuild: BigNumber
-      guildHallContribution: BigNumber
-      nitroLabContribution: BigNumber
-      producedNitro: BigNumber
-      produceCompletedTime: BigNumber
-      claimedNitro: BigNumber
-      0: BigNumber
-      1: BigNumber
-      2: BigNumber
-      3: BigNumber
-      4: BigNumber
-      5: BigNumber
-      6: BigNumber
-    }>
+      guildId: BigNumber;
+      lastOutOfGuild: BigNumber;
+      contributionPoint: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+    }>;
 
-    'users(address)'(
+    "users(address)"(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<{
-      guildId: BigNumber
-      lastOutOfGuild: BigNumber
-      guildHallContribution: BigNumber
-      nitroLabContribution: BigNumber
-      producedNitro: BigNumber
-      produceCompletedTime: BigNumber
-      claimedNitro: BigNumber
-      0: BigNumber
-      1: BigNumber
-      2: BigNumber
-      3: BigNumber
-      4: BigNumber
-      5: BigNumber
-      6: BigNumber
-    }>
-  }
+      guildId: BigNumber;
+      lastOutOfGuild: BigNumber;
+      contributionPoint: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+    }>;
+  };
 
-  'CREATE_GUILD_WITH_SIG_TYPEHASH'(overrides?: CallOverrides): Promise<string>
+  CREATE_GUILD_WITH_SIG_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
-  'CREATE_GUILD_WITH_SIG_TYPEHASH()'(overrides?: CallOverrides): Promise<string>
+  "CREATE_GUILD_WITH_SIG_TYPEHASH()"(
+    overrides?: CallOverrides
+  ): Promise<string>;
 
-  'GUILD_HALL_ID'(overrides?: CallOverrides): Promise<BigNumber>
+  JOIN_GUILD_WITH_SIG_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
-  'GUILD_HALL_ID()'(overrides?: CallOverrides): Promise<BigNumber>
+  "JOIN_GUILD_WITH_SIG_TYPEHASH()"(overrides?: CallOverrides): Promise<string>;
 
-  'JOIN_GUILD_WITH_SIG_TYPEHASH'(overrides?: CallOverrides): Promise<string>
-
-  'JOIN_GUILD_WITH_SIG_TYPEHASH()'(overrides?: CallOverrides): Promise<string>
-
-  'NITRO_LAB_ID'(overrides?: CallOverrides): Promise<BigNumber>
-
-  'NITRO_LAB_ID()'(overrides?: CallOverrides): Promise<BigNumber>
-
-  '__MechaGuild_init'(
-    _nitroContract: string,
+  __MechaGuild_init(
     _materialContract: string,
     _materialId: BigNumberish,
-    _mechContract: string,
+    _tokenContract: string,
     _fundingWallet: string,
     _signer: string,
     overrides?: Overrides
-  ): Promise<ContractTransaction>
+  ): Promise<ContractTransaction>;
 
-  '__MechaGuild_init(address,address,uint256,address,address,address)'(
-    _nitroContract: string,
+  "__MechaGuild_init(address,uint256,address,address,address)"(
     _materialContract: string,
     _materialId: BigNumberish,
-    _mechContract: string,
+    _tokenContract: string,
     _fundingWallet: string,
     _signer: string,
     overrides?: Overrides
-  ): Promise<ContractTransaction>
+  ): Promise<ContractTransaction>;
 
-  'acceptJoinRequest'(members: string[], overrides?: Overrides): Promise<ContractTransaction>
-
-  'acceptJoinRequest(address[])'(
-    members: string[],
+  acceptJoinRequest(
+    _members: string[],
     overrides?: Overrides
-  ): Promise<ContractTransaction>
+  ): Promise<ContractTransaction>;
 
-  'changeGuildMaster'(newMaster: string, overrides?: Overrides): Promise<ContractTransaction>
-
-  'changeGuildMaster(address)'(
-    newMaster: string,
+  "acceptJoinRequest(address[])"(
+    _members: string[],
     overrides?: Overrides
-  ): Promise<ContractTransaction>
+  ): Promise<ContractTransaction>;
 
-  'claimNitro'(overrides?: Overrides): Promise<ContractTransaction>
+  cancelJoinRequest(overrides?: Overrides): Promise<ContractTransaction>;
 
-  'claimNitro()'(overrides?: Overrides): Promise<ContractTransaction>
+  "cancelJoinRequest()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-  'contributeGuildBase'(
-    buildingType: BigNumberish,
-    amount: BigNumberish,
+  changeAccessType(
+    _isPrivate: boolean,
     overrides?: Overrides
-  ): Promise<ContractTransaction>
+  ): Promise<ContractTransaction>;
 
-  'contributeGuildBase(uint256,uint256)'(
-    buildingType: BigNumberish,
-    amount: BigNumberish,
+  "changeAccessType(bool)"(
+    _isPrivate: boolean,
     overrides?: Overrides
-  ): Promise<ContractTransaction>
+  ): Promise<ContractTransaction>;
 
-  'createGuildFee'(overrides?: CallOverrides): Promise<BigNumber>
+  contributeGuildBase(
+    _amount: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
-  'createGuildFee()'(overrides?: CallOverrides): Promise<BigNumber>
+  "contributeGuildBase(uint256)"(
+    _amount: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
-  'createGuildMaterial'(overrides?: CallOverrides): Promise<BigNumber>
+  createGuildSigNonces(
+    arg0: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
-  'createGuildMaterial()'(overrides?: CallOverrides): Promise<BigNumber>
+  "createGuildSigNonces(address)"(
+    arg0: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
-  'createGuildSigNonces'(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
-
-  'createGuildSigNonces(address)'(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
-
-  'createGuildWithSig'(
-    isPrivate: boolean,
-    sig_: {
-      deadline: BigNumberish
-      v: BigNumberish
-      r: BytesLike
-      s: BytesLike
+  createGuildWithSig(
+    _isPrivate: boolean,
+    _sig: {
+      deadline: BigNumberish;
+      v: BigNumberish;
+      r: BytesLike;
+      s: BytesLike;
     },
     overrides?: Overrides
-  ): Promise<ContractTransaction>
+  ): Promise<ContractTransaction>;
 
-  'createGuildWithSig(bool,tuple)'(
-    isPrivate: boolean,
-    sig_: {
-      deadline: BigNumberish
-      v: BigNumberish
-      r: BytesLike
-      s: BytesLike
+  "createGuildWithSig(bool,tuple)"(
+    _isPrivate: boolean,
+    _sig: {
+      deadline: BigNumberish;
+      v: BigNumberish;
+      r: BytesLike;
+      s: BytesLike;
     },
     overrides?: Overrides
-  ): Promise<ContractTransaction>
+  ): Promise<ContractTransaction>;
 
-  'fundingWallet'(overrides?: CallOverrides): Promise<string>
+  createMaterialFee(overrides?: CallOverrides): Promise<BigNumber>;
 
-  'fundingWallet()'(overrides?: CallOverrides): Promise<string>
+  "createMaterialFee()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  'getCurrentBuildingLevel'(
-    guildId: BigNumberish,
-    buildingType: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>
+  createTokenFee(overrides?: CallOverrides): Promise<BigNumber>;
 
-  'getCurrentBuildingLevel(uint256,uint256)'(
-    guildId: BigNumberish,
-    buildingType: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>
+  "createTokenFee()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  'getEthSignedMessageHash'(_messageHash: BytesLike, overrides?: CallOverrides): Promise<string>
+  denyJoinRequest(
+    _members: string[],
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
-  'getEthSignedMessageHash(bytes32)'(
-    _messageHash: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<string>
+  "denyJoinRequest(address[])"(
+    _members: string[],
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
-  'getMemberOfGuild'(guildId: BigNumberish, overrides?: CallOverrides): Promise<string[]>
+  fundingWallet(overrides?: CallOverrides): Promise<string>;
 
-  'getMemberOfGuild(uint256)'(guildId: BigNumberish, overrides?: CallOverrides): Promise<string[]>
+  "fundingWallet()"(overrides?: CallOverrides): Promise<string>;
 
-  'getPendingMemberOfGuild'(guildId: BigNumberish, overrides?: CallOverrides): Promise<string[]>
-
-  'getPendingMemberOfGuild(uint256)'(
+  getCurrentBuildingLevel(
     guildId: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<string[]>
+  ): Promise<BigNumber>;
 
-  'getSignerAddress'(
-    _messageHash: BytesLike,
-    _signature: BytesLike,
+  "getCurrentBuildingLevel(uint256)"(
+    guildId: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<string>
+  ): Promise<BigNumber>;
 
-  'getSignerAddress(bytes32,bytes)'(
-    _messageHash: BytesLike,
-    _signature: BytesLike,
+  getMemberOfGuild(
+    guildId: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<string>
+  ): Promise<string[]>;
 
-  'guildCount'(overrides?: CallOverrides): Promise<BigNumber>
+  "getMemberOfGuild(uint256)"(
+    guildId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string[]>;
 
-  'guildCount()'(overrides?: CallOverrides): Promise<BigNumber>
+  getPendingMemberOfGuild(
+    guildId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string[]>;
 
-  'guildHall'(
+  "getPendingMemberOfGuild(uint256)"(
+    guildId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string[]>;
+
+  guildContribution(
     arg0: BigNumberish,
+    arg1: string,
     overrides?: CallOverrides
-  ): Promise<{
-    materials: BigNumber
-    level: BigNumber
-    completedTime: BigNumber
-    0: BigNumber
-    1: BigNumber
-    2: BigNumber
-  }>
+  ): Promise<BigNumber>;
 
-  'guildHall(uint256)'(
+  "guildContribution(uint256,address)"(
     arg0: BigNumberish,
+    arg1: string,
     overrides?: CallOverrides
-  ): Promise<{
-    materials: BigNumber
-    level: BigNumber
-    completedTime: BigNumber
-    0: BigNumber
-    1: BigNumber
-    2: BigNumber
-  }>
+  ): Promise<BigNumber>;
 
-  'guildHallSetting'(
+  guildCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "guildCount()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  guildHallSettings(
     arg0: BigNumberish,
     arg1: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<BigNumber>
+  ): Promise<BigNumber>;
 
-  'guildHallSetting(uint256,uint256)'(
+  "guildHallSettings(uint256,uint256)"(
     arg0: BigNumberish,
     arg1: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<BigNumber>
+  ): Promise<BigNumber>;
 
-  'guilds'(
+  guildHalls(
     arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<{
-    master: string
-    isPrivate: boolean
-    0: string
-    1: boolean
-  }>
+    materials: BigNumber;
+    level: BigNumber;
+    completedTime: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+    2: BigNumber;
+  }>;
 
-  'guilds(uint256)'(
+  "guildHalls(uint256)"(
     arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<{
-    master: string
-    isPrivate: boolean
-    0: string
-    1: boolean
-  }>
+    materials: BigNumber;
+    level: BigNumber;
+    completedTime: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+    2: BigNumber;
+  }>;
 
-  'joinGuildSigNonces'(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+  guilds(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<{
+    master: string;
+    isPrivate: boolean;
+    0: string;
+    1: boolean;
+  }>;
 
-  'joinGuildSigNonces(address)'(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+  "guilds(uint256)"(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<{
+    master: string;
+    isPrivate: boolean;
+    0: string;
+    1: boolean;
+  }>;
 
-  'joinGuildWithSig'(
-    guildId: BigNumberish,
-    sig_: {
-      deadline: BigNumberish
-      v: BigNumberish
-      r: BytesLike
-      s: BytesLike
+  increaseMaxGuildHallLevel(
+    _maxMember: BigNumberish,
+    _upgradeTime: BigNumberish,
+    _cost: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "increaseMaxGuildHallLevel(uint256,uint256,uint256)"(
+    _maxMember: BigNumberish,
+    _upgradeTime: BigNumberish,
+    _cost: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  joinGuildSigNonces(
+    arg0: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "joinGuildSigNonces(address)"(
+    arg0: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  joinGuildWithSig(
+    _guildId: BigNumberish,
+    _sig: {
+      deadline: BigNumberish;
+      v: BigNumberish;
+      r: BytesLike;
+      s: BytesLike;
     },
     overrides?: Overrides
-  ): Promise<ContractTransaction>
+  ): Promise<ContractTransaction>;
 
-  'joinGuildWithSig(uint256,tuple)'(
-    guildId: BigNumberish,
-    sig_: {
-      deadline: BigNumberish
-      v: BigNumberish
-      r: BytesLike
-      s: BytesLike
+  "joinGuildWithSig(uint256,tuple)"(
+    _guildId: BigNumberish,
+    _sig: {
+      deadline: BigNumberish;
+      v: BigNumberish;
+      r: BytesLike;
+      s: BytesLike;
     },
     overrides?: Overrides
-  ): Promise<ContractTransaction>
+  ): Promise<ContractTransaction>;
 
-  'kickMember'(memberAddress: string, overrides?: Overrides): Promise<ContractTransaction>
+  kickMember(
+    _member: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
-  'kickMember(address)'(memberAddress: string, overrides?: Overrides): Promise<ContractTransaction>
+  "kickMember(address)"(
+    _member: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
-  'materialContract'(overrides?: CallOverrides): Promise<string>
+  materialContract(overrides?: CallOverrides): Promise<string>;
 
-  'materialContract()'(overrides?: CallOverrides): Promise<string>
+  "materialContract()"(overrides?: CallOverrides): Promise<string>;
 
-  'materialID'(overrides?: CallOverrides): Promise<BigNumber>
+  materialID(overrides?: CallOverrides): Promise<BigNumber>;
 
-  'materialID()'(overrides?: CallOverrides): Promise<BigNumber>
+  "materialID()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  'maxGuildHallLevel'(overrides?: CallOverrides): Promise<BigNumber>
+  maxGuildHallLevel(overrides?: CallOverrides): Promise<BigNumber>;
 
-  'maxGuildHallLevel()'(overrides?: CallOverrides): Promise<BigNumber>
+  "maxGuildHallLevel()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  'maxNitroLabLevel'(overrides?: CallOverrides): Promise<BigNumber>
+  outOfGuild(overrides?: Overrides): Promise<ContractTransaction>;
 
-  'maxNitroLabLevel()'(overrides?: CallOverrides): Promise<BigNumber>
+  "outOfGuild()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-  'mechContract'(overrides?: CallOverrides): Promise<string>
+  owner(overrides?: CallOverrides): Promise<string>;
 
-  'mechContract()'(overrides?: CallOverrides): Promise<string>
+  "owner()"(overrides?: CallOverrides): Promise<string>;
 
-  'nitroContract'(overrides?: CallOverrides): Promise<string>
+  penaltyTime(overrides?: CallOverrides): Promise<BigNumber>;
 
-  'nitroContract()'(overrides?: CallOverrides): Promise<string>
+  "penaltyTime()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  'nitroLab'(
-    arg0: BigNumberish,
+  pendingRequests(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  "pendingRequests(address)"(
+    arg0: string,
     overrides?: CallOverrides
-  ): Promise<{
-    materials: BigNumber
-    level: BigNumber
-    completedTime: BigNumber
-    0: BigNumber
-    1: BigNumber
-    2: BigNumber
-  }>
+  ): Promise<BigNumber>;
 
-  'nitroLab(uint256)'(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<{
-    materials: BigNumber
-    level: BigNumber
-    completedTime: BigNumber
-    0: BigNumber
-    1: BigNumber
-    2: BigNumber
-  }>
+  promoteNewMaster(
+    _newMaster: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
-  'nitroLabSetting'(
-    arg0: BigNumberish,
-    arg1: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>
+  "promoteNewMaster(address)"(
+    _newMaster: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
-  'nitroLabSetting(uint256,uint256)'(
-    arg0: BigNumberish,
-    arg1: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>
+  renounceOwnership(overrides?: Overrides): Promise<ContractTransaction>;
 
-  'nitroProductionFee'(overrides?: CallOverrides): Promise<BigNumber>
+  "renounceOwnership()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-  'nitroProductionFee()'(overrides?: CallOverrides): Promise<BigNumber>
+  setCreateFee(
+    _tokenFee: BigNumberish,
+    _materialFee: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
-  'outOfGuild'(overrides?: Overrides): Promise<ContractTransaction>
+  "setCreateFee(uint256,uint256)"(
+    _tokenFee: BigNumberish,
+    _materialFee: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
-  'outOfGuild()'(overrides?: Overrides): Promise<ContractTransaction>
+  setFundingWallet(
+    _fundingWallet: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
-  'owner'(overrides?: CallOverrides): Promise<string>
+  "setFundingWallet(address)"(
+    _fundingWallet: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
-  'owner()'(overrides?: CallOverrides): Promise<string>
+  setGuildHallLevelSetting(
+    _level: BigNumberish,
+    _maxMember: BigNumberish,
+    _upgradeTime: BigNumberish,
+    _cost: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
-  'penaltyTime'(overrides?: CallOverrides): Promise<BigNumber>
+  "setGuildHallLevelSetting(uint256,uint256,uint256,uint256)"(
+    _level: BigNumberish,
+    _maxMember: BigNumberish,
+    _upgradeTime: BigNumberish,
+    _cost: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
-  'penaltyTime()'(overrides?: CallOverrides): Promise<BigNumber>
+  setPenaltyTime(
+    _penaltyTime: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
-  'produceNitro'(overrides?: Overrides): Promise<ContractTransaction>
+  "setPenaltyTime(uint256)"(
+    _penaltyTime: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
-  'produceNitro()'(overrides?: Overrides): Promise<ContractTransaction>
+  setSigner(
+    _signer: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
-  'renounceOwnership'(overrides?: Overrides): Promise<ContractTransaction>
+  "setSigner(address)"(
+    _signer: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
-  'renounceOwnership()'(overrides?: Overrides): Promise<ContractTransaction>
+  tokenContract(overrides?: CallOverrides): Promise<string>;
 
-  'setSigner'(_signer: string, overrides?: Overrides): Promise<ContractTransaction>
+  "tokenContract()"(overrides?: CallOverrides): Promise<string>;
 
-  'setSigner(address)'(_signer: string, overrides?: Overrides): Promise<ContractTransaction>
-
-  'transferOwnership'(newOwner: string, overrides?: Overrides): Promise<ContractTransaction>
-
-  'transferOwnership(address)'(
+  transferOwnership(
     newOwner: string,
     overrides?: Overrides
-  ): Promise<ContractTransaction>
+  ): Promise<ContractTransaction>;
 
-  'upgradeBuilding'(buildingType: BigNumberish, overrides?: Overrides): Promise<ContractTransaction>
-
-  'upgradeBuilding(uint256)'(
-    buildingType: BigNumberish,
+  "transferOwnership(address)"(
+    newOwner: string,
     overrides?: Overrides
-  ): Promise<ContractTransaction>
+  ): Promise<ContractTransaction>;
 
-  'users'(
+  upgradeBuilding(overrides?: Overrides): Promise<ContractTransaction>;
+
+  "upgradeBuilding()"(overrides?: Overrides): Promise<ContractTransaction>;
+
+  users(
     arg0: string,
     overrides?: CallOverrides
   ): Promise<{
-    guildId: BigNumber
-    lastOutOfGuild: BigNumber
-    guildHallContribution: BigNumber
-    nitroLabContribution: BigNumber
-    producedNitro: BigNumber
-    produceCompletedTime: BigNumber
-    claimedNitro: BigNumber
-    0: BigNumber
-    1: BigNumber
-    2: BigNumber
-    3: BigNumber
-    4: BigNumber
-    5: BigNumber
-    6: BigNumber
-  }>
+    guildId: BigNumber;
+    lastOutOfGuild: BigNumber;
+    contributionPoint: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+    2: BigNumber;
+  }>;
 
-  'users(address)'(
+  "users(address)"(
     arg0: string,
     overrides?: CallOverrides
   ): Promise<{
-    guildId: BigNumber
-    lastOutOfGuild: BigNumber
-    guildHallContribution: BigNumber
-    nitroLabContribution: BigNumber
-    producedNitro: BigNumber
-    produceCompletedTime: BigNumber
-    claimedNitro: BigNumber
-    0: BigNumber
-    1: BigNumber
-    2: BigNumber
-    3: BigNumber
-    4: BigNumber
-    5: BigNumber
-    6: BigNumber
-  }>
+    guildId: BigNumber;
+    lastOutOfGuild: BigNumber;
+    contributionPoint: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+    2: BigNumber;
+  }>;
 
-  'callStatic': {
-    CREATE_GUILD_WITH_SIG_TYPEHASH(overrides?: CallOverrides): Promise<string>
+  callStatic: {
+    CREATE_GUILD_WITH_SIG_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
-    'CREATE_GUILD_WITH_SIG_TYPEHASH()'(overrides?: CallOverrides): Promise<string>
+    "CREATE_GUILD_WITH_SIG_TYPEHASH()"(
+      overrides?: CallOverrides
+    ): Promise<string>;
 
-    GUILD_HALL_ID(overrides?: CallOverrides): Promise<BigNumber>
+    JOIN_GUILD_WITH_SIG_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
-    'GUILD_HALL_ID()'(overrides?: CallOverrides): Promise<BigNumber>
-
-    JOIN_GUILD_WITH_SIG_TYPEHASH(overrides?: CallOverrides): Promise<string>
-
-    'JOIN_GUILD_WITH_SIG_TYPEHASH()'(overrides?: CallOverrides): Promise<string>
-
-    NITRO_LAB_ID(overrides?: CallOverrides): Promise<BigNumber>
-
-    'NITRO_LAB_ID()'(overrides?: CallOverrides): Promise<BigNumber>
+    "JOIN_GUILD_WITH_SIG_TYPEHASH()"(
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     __MechaGuild_init(
-      _nitroContract: string,
       _materialContract: string,
       _materialId: BigNumberish,
-      _mechContract: string,
+      _tokenContract: string,
       _fundingWallet: string,
       _signer: string,
       overrides?: CallOverrides
-    ): Promise<void>
+    ): Promise<void>;
 
-    '__MechaGuild_init(address,address,uint256,address,address,address)'(
-      _nitroContract: string,
+    "__MechaGuild_init(address,uint256,address,address,address)"(
       _materialContract: string,
       _materialId: BigNumberish,
-      _mechContract: string,
+      _tokenContract: string,
       _fundingWallet: string,
       _signer: string,
       overrides?: CallOverrides
-    ): Promise<void>
+    ): Promise<void>;
 
-    acceptJoinRequest(members: string[], overrides?: CallOverrides): Promise<void>
+    acceptJoinRequest(
+      _members: string[],
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    'acceptJoinRequest(address[])'(members: string[], overrides?: CallOverrides): Promise<void>
+    "acceptJoinRequest(address[])"(
+      _members: string[],
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    changeGuildMaster(newMaster: string, overrides?: CallOverrides): Promise<void>
+    cancelJoinRequest(overrides?: CallOverrides): Promise<void>;
 
-    'changeGuildMaster(address)'(newMaster: string, overrides?: CallOverrides): Promise<void>
+    "cancelJoinRequest()"(overrides?: CallOverrides): Promise<void>;
 
-    claimNitro(overrides?: CallOverrides): Promise<void>
+    changeAccessType(
+      _isPrivate: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    'claimNitro()'(overrides?: CallOverrides): Promise<void>
+    "changeAccessType(bool)"(
+      _isPrivate: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     contributeGuildBase(
-      buildingType: BigNumberish,
-      amount: BigNumberish,
+      _amount: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<void>
+    ): Promise<void>;
 
-    'contributeGuildBase(uint256,uint256)'(
-      buildingType: BigNumberish,
-      amount: BigNumberish,
+    "contributeGuildBase(uint256)"(
+      _amount: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<void>
+    ): Promise<void>;
 
-    createGuildFee(overrides?: CallOverrides): Promise<BigNumber>
+    createGuildSigNonces(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    'createGuildFee()'(overrides?: CallOverrides): Promise<BigNumber>
-
-    createGuildMaterial(overrides?: CallOverrides): Promise<BigNumber>
-
-    'createGuildMaterial()'(overrides?: CallOverrides): Promise<BigNumber>
-
-    createGuildSigNonces(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
-
-    'createGuildSigNonces(address)'(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+    "createGuildSigNonces(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     createGuildWithSig(
-      isPrivate: boolean,
-      sig_: {
-        deadline: BigNumberish
-        v: BigNumberish
-        r: BytesLike
-        s: BytesLike
+      _isPrivate: boolean,
+      _sig: {
+        deadline: BigNumberish;
+        v: BigNumberish;
+        r: BytesLike;
+        s: BytesLike;
       },
       overrides?: CallOverrides
-    ): Promise<void>
+    ): Promise<void>;
 
-    'createGuildWithSig(bool,tuple)'(
-      isPrivate: boolean,
-      sig_: {
-        deadline: BigNumberish
-        v: BigNumberish
-        r: BytesLike
-        s: BytesLike
+    "createGuildWithSig(bool,tuple)"(
+      _isPrivate: boolean,
+      _sig: {
+        deadline: BigNumberish;
+        v: BigNumberish;
+        r: BytesLike;
+        s: BytesLike;
       },
       overrides?: CallOverrides
-    ): Promise<void>
+    ): Promise<void>;
 
-    fundingWallet(overrides?: CallOverrides): Promise<string>
+    createMaterialFee(overrides?: CallOverrides): Promise<BigNumber>;
 
-    'fundingWallet()'(overrides?: CallOverrides): Promise<string>
+    "createMaterialFee()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    createTokenFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "createTokenFee()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    denyJoinRequest(
+      _members: string[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "denyJoinRequest(address[])"(
+      _members: string[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    fundingWallet(overrides?: CallOverrides): Promise<string>;
+
+    "fundingWallet()"(overrides?: CallOverrides): Promise<string>;
 
     getCurrentBuildingLevel(
       guildId: BigNumberish,
-      buildingType: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BigNumber>
+    ): Promise<BigNumber>;
 
-    'getCurrentBuildingLevel(uint256,uint256)'(
-      guildId: BigNumberish,
-      buildingType: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>
-
-    getEthSignedMessageHash(_messageHash: BytesLike, overrides?: CallOverrides): Promise<string>
-
-    'getEthSignedMessageHash(bytes32)'(
-      _messageHash: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<string>
-
-    getMemberOfGuild(guildId: BigNumberish, overrides?: CallOverrides): Promise<string[]>
-
-    'getMemberOfGuild(uint256)'(guildId: BigNumberish, overrides?: CallOverrides): Promise<string[]>
-
-    getPendingMemberOfGuild(guildId: BigNumberish, overrides?: CallOverrides): Promise<string[]>
-
-    'getPendingMemberOfGuild(uint256)'(
+    "getCurrentBuildingLevel(uint256)"(
       guildId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<string[]>
+    ): Promise<BigNumber>;
 
-    getSignerAddress(
-      _messageHash: BytesLike,
-      _signature: BytesLike,
+    getMemberOfGuild(
+      guildId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<string>
+    ): Promise<string[]>;
 
-    'getSignerAddress(bytes32,bytes)'(
-      _messageHash: BytesLike,
-      _signature: BytesLike,
+    "getMemberOfGuild(uint256)"(
+      guildId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<string>
+    ): Promise<string[]>;
 
-    guildCount(overrides?: CallOverrides): Promise<BigNumber>
+    getPendingMemberOfGuild(
+      guildId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string[]>;
 
-    'guildCount()'(overrides?: CallOverrides): Promise<BigNumber>
+    "getPendingMemberOfGuild(uint256)"(
+      guildId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string[]>;
 
-    guildHall(
+    guildContribution(
       arg0: BigNumberish,
+      arg1: string,
       overrides?: CallOverrides
-    ): Promise<{
-      materials: BigNumber
-      level: BigNumber
-      completedTime: BigNumber
-      0: BigNumber
-      1: BigNumber
-      2: BigNumber
-    }>
+    ): Promise<BigNumber>;
 
-    'guildHall(uint256)'(
+    "guildContribution(uint256,address)"(
       arg0: BigNumberish,
+      arg1: string,
       overrides?: CallOverrides
-    ): Promise<{
-      materials: BigNumber
-      level: BigNumber
-      completedTime: BigNumber
-      0: BigNumber
-      1: BigNumber
-      2: BigNumber
-    }>
+    ): Promise<BigNumber>;
 
-    guildHallSetting(
+    guildCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "guildCount()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    guildHallSettings(
       arg0: BigNumberish,
       arg1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BigNumber>
+    ): Promise<BigNumber>;
 
-    'guildHallSetting(uint256,uint256)'(
+    "guildHallSettings(uint256,uint256)"(
       arg0: BigNumberish,
       arg1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BigNumber>
+    ): Promise<BigNumber>;
+
+    guildHalls(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<{
+      materials: BigNumber;
+      level: BigNumber;
+      completedTime: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+    }>;
+
+    "guildHalls(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<{
+      materials: BigNumber;
+      level: BigNumber;
+      completedTime: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+    }>;
 
     guilds(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<{
-      master: string
-      isPrivate: boolean
-      0: string
-      1: boolean
-    }>
+      master: string;
+      isPrivate: boolean;
+      0: string;
+      1: boolean;
+    }>;
 
-    'guilds(uint256)'(
+    "guilds(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<{
-      master: string
-      isPrivate: boolean
-      0: string
-      1: boolean
-    }>
+      master: string;
+      isPrivate: boolean;
+      0: string;
+      1: boolean;
+    }>;
 
-    joinGuildSigNonces(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+    increaseMaxGuildHallLevel(
+      _maxMember: BigNumberish,
+      _upgradeTime: BigNumberish,
+      _cost: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    'joinGuildSigNonces(address)'(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+    "increaseMaxGuildHallLevel(uint256,uint256,uint256)"(
+      _maxMember: BigNumberish,
+      _upgradeTime: BigNumberish,
+      _cost: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    joinGuildSigNonces(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "joinGuildSigNonces(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     joinGuildWithSig(
-      guildId: BigNumberish,
-      sig_: {
-        deadline: BigNumberish
-        v: BigNumberish
-        r: BytesLike
-        s: BytesLike
+      _guildId: BigNumberish,
+      _sig: {
+        deadline: BigNumberish;
+        v: BigNumberish;
+        r: BytesLike;
+        s: BytesLike;
       },
       overrides?: CallOverrides
-    ): Promise<void>
+    ): Promise<void>;
 
-    'joinGuildWithSig(uint256,tuple)'(
-      guildId: BigNumberish,
-      sig_: {
-        deadline: BigNumberish
-        v: BigNumberish
-        r: BytesLike
-        s: BytesLike
+    "joinGuildWithSig(uint256,tuple)"(
+      _guildId: BigNumberish,
+      _sig: {
+        deadline: BigNumberish;
+        v: BigNumberish;
+        r: BytesLike;
+        s: BytesLike;
       },
       overrides?: CallOverrides
-    ): Promise<void>
+    ): Promise<void>;
 
-    kickMember(memberAddress: string, overrides?: CallOverrides): Promise<void>
+    kickMember(_member: string, overrides?: CallOverrides): Promise<void>;
 
-    'kickMember(address)'(memberAddress: string, overrides?: CallOverrides): Promise<void>
-
-    materialContract(overrides?: CallOverrides): Promise<string>
-
-    'materialContract()'(overrides?: CallOverrides): Promise<string>
-
-    materialID(overrides?: CallOverrides): Promise<BigNumber>
-
-    'materialID()'(overrides?: CallOverrides): Promise<BigNumber>
-
-    maxGuildHallLevel(overrides?: CallOverrides): Promise<BigNumber>
-
-    'maxGuildHallLevel()'(overrides?: CallOverrides): Promise<BigNumber>
-
-    maxNitroLabLevel(overrides?: CallOverrides): Promise<BigNumber>
-
-    'maxNitroLabLevel()'(overrides?: CallOverrides): Promise<BigNumber>
-
-    mechContract(overrides?: CallOverrides): Promise<string>
-
-    'mechContract()'(overrides?: CallOverrides): Promise<string>
-
-    nitroContract(overrides?: CallOverrides): Promise<string>
-
-    'nitroContract()'(overrides?: CallOverrides): Promise<string>
-
-    nitroLab(
-      arg0: BigNumberish,
+    "kickMember(address)"(
+      _member: string,
       overrides?: CallOverrides
-    ): Promise<{
-      materials: BigNumber
-      level: BigNumber
-      completedTime: BigNumber
-      0: BigNumber
-      1: BigNumber
-      2: BigNumber
-    }>
+    ): Promise<void>;
 
-    'nitroLab(uint256)'(
-      arg0: BigNumberish,
+    materialContract(overrides?: CallOverrides): Promise<string>;
+
+    "materialContract()"(overrides?: CallOverrides): Promise<string>;
+
+    materialID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "materialID()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    maxGuildHallLevel(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "maxGuildHallLevel()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    outOfGuild(overrides?: CallOverrides): Promise<void>;
+
+    "outOfGuild()"(overrides?: CallOverrides): Promise<void>;
+
+    owner(overrides?: CallOverrides): Promise<string>;
+
+    "owner()"(overrides?: CallOverrides): Promise<string>;
+
+    penaltyTime(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "penaltyTime()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    pendingRequests(
+      arg0: string,
       overrides?: CallOverrides
-    ): Promise<{
-      materials: BigNumber
-      level: BigNumber
-      completedTime: BigNumber
-      0: BigNumber
-      1: BigNumber
-      2: BigNumber
-    }>
+    ): Promise<BigNumber>;
 
-    nitroLabSetting(
-      arg0: BigNumberish,
-      arg1: BigNumberish,
+    "pendingRequests(address)"(
+      arg0: string,
       overrides?: CallOverrides
-    ): Promise<BigNumber>
+    ): Promise<BigNumber>;
 
-    'nitroLabSetting(uint256,uint256)'(
-      arg0: BigNumberish,
-      arg1: BigNumberish,
+    promoteNewMaster(
+      _newMaster: string,
       overrides?: CallOverrides
-    ): Promise<BigNumber>
+    ): Promise<void>;
 
-    nitroProductionFee(overrides?: CallOverrides): Promise<BigNumber>
+    "promoteNewMaster(address)"(
+      _newMaster: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    'nitroProductionFee()'(overrides?: CallOverrides): Promise<BigNumber>
+    renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
-    outOfGuild(overrides?: CallOverrides): Promise<void>
+    "renounceOwnership()"(overrides?: CallOverrides): Promise<void>;
 
-    'outOfGuild()'(overrides?: CallOverrides): Promise<void>
+    setCreateFee(
+      _tokenFee: BigNumberish,
+      _materialFee: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    owner(overrides?: CallOverrides): Promise<string>
+    "setCreateFee(uint256,uint256)"(
+      _tokenFee: BigNumberish,
+      _materialFee: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    'owner()'(overrides?: CallOverrides): Promise<string>
+    setFundingWallet(
+      _fundingWallet: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    penaltyTime(overrides?: CallOverrides): Promise<BigNumber>
+    "setFundingWallet(address)"(
+      _fundingWallet: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    'penaltyTime()'(overrides?: CallOverrides): Promise<BigNumber>
+    setGuildHallLevelSetting(
+      _level: BigNumberish,
+      _maxMember: BigNumberish,
+      _upgradeTime: BigNumberish,
+      _cost: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    produceNitro(overrides?: CallOverrides): Promise<void>
+    "setGuildHallLevelSetting(uint256,uint256,uint256,uint256)"(
+      _level: BigNumberish,
+      _maxMember: BigNumberish,
+      _upgradeTime: BigNumberish,
+      _cost: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    'produceNitro()'(overrides?: CallOverrides): Promise<void>
+    setPenaltyTime(
+      _penaltyTime: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    renounceOwnership(overrides?: CallOverrides): Promise<void>
+    "setPenaltyTime(uint256)"(
+      _penaltyTime: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    'renounceOwnership()'(overrides?: CallOverrides): Promise<void>
+    setSigner(_signer: string, overrides?: CallOverrides): Promise<void>;
 
-    setSigner(_signer: string, overrides?: CallOverrides): Promise<void>
+    "setSigner(address)"(
+      _signer: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    'setSigner(address)'(_signer: string, overrides?: CallOverrides): Promise<void>
+    tokenContract(overrides?: CallOverrides): Promise<string>;
 
-    transferOwnership(newOwner: string, overrides?: CallOverrides): Promise<void>
+    "tokenContract()"(overrides?: CallOverrides): Promise<string>;
 
-    'transferOwnership(address)'(newOwner: string, overrides?: CallOverrides): Promise<void>
+    transferOwnership(
+      newOwner: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    upgradeBuilding(buildingType: BigNumberish, overrides?: CallOverrides): Promise<void>
+    "transferOwnership(address)"(
+      newOwner: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    'upgradeBuilding(uint256)'(buildingType: BigNumberish, overrides?: CallOverrides): Promise<void>
+    upgradeBuilding(overrides?: CallOverrides): Promise<void>;
+
+    "upgradeBuilding()"(overrides?: CallOverrides): Promise<void>;
 
     users(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<{
-      guildId: BigNumber
-      lastOutOfGuild: BigNumber
-      guildHallContribution: BigNumber
-      nitroLabContribution: BigNumber
-      producedNitro: BigNumber
-      produceCompletedTime: BigNumber
-      claimedNitro: BigNumber
-      0: BigNumber
-      1: BigNumber
-      2: BigNumber
-      3: BigNumber
-      4: BigNumber
-      5: BigNumber
-      6: BigNumber
-    }>
+      guildId: BigNumber;
+      lastOutOfGuild: BigNumber;
+      contributionPoint: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+    }>;
 
-    'users(address)'(
+    "users(address)"(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<{
-      guildId: BigNumber
-      lastOutOfGuild: BigNumber
-      guildHallContribution: BigNumber
-      nitroLabContribution: BigNumber
-      producedNitro: BigNumber
-      produceCompletedTime: BigNumber
-      claimedNitro: BigNumber
-      0: BigNumber
-      1: BigNumber
-      2: BigNumber
-      3: BigNumber
-      4: BigNumber
-      5: BigNumber
-      6: BigNumber
-    }>
-  }
+      guildId: BigNumber;
+      lastOutOfGuild: BigNumber;
+      contributionPoint: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+    }>;
+  };
 
-  'filters': {
-    ChangedGuildMaster(guildId: null, oldGuildMaster: null, newGuildMaster: null): EventFilter
+  filters: {
+    GuildAccessChanged(guildId: null, isPrivate: null): EventFilter;
 
-    ClaimedNitro(guildId: null, member: null): EventFilter
+    GuildCreated(
+      guildId: null,
+      guildMaster: null,
+      sigNonce: null,
+      isPrivate: null
+    ): EventFilter;
 
-    ContributeGuildHall(guildId: null, member: null, amountMaterial: null): EventFilter
+    GuildHallContributed(
+      guildId: null,
+      member: null,
+      amountMaterial: null
+    ): EventFilter;
 
-    ContributeNitroLab(guildId: null, member: null, amountMaterial: null): EventFilter
+    GuildHallUpgraded(
+      guildId: null,
+      level: null,
+      compeletedTime: null
+    ): EventFilter;
 
-    CreatedGuild(guildId: null, guildMaster: null, isPrivate: null): EventFilter
+    GuildMasterChanged(
+      guildId: null,
+      oldMaster: null,
+      newMaster: null
+    ): EventFilter;
 
-    Joined(guildId: null, memberAddress: null): EventFilter
+    Joined(guildId: null, memberAddress: null): EventFilter;
 
-    OutOfGuild(guildId: null, memberAddress: null): EventFilter
+    OutOfGuild(guildId: null, memberAddress: null): EventFilter;
 
-    OwnershipTransferred(previousOwner: string | null, newOwner: string | null): EventFilter
+    OwnershipTransferred(
+      previousOwner: string | null,
+      newOwner: string | null
+    ): EventFilter;
 
-    ProduceNitro(guildId: null, member: null, completedTime: null): EventFilter
+    RequestCanceled(guildId: null, memberAddress: null): EventFilter;
 
-    RequestToJoin(guildId: null, memberAddress: null): EventFilter
+    RequestToJoin(guildId: null, memberAddress: null): EventFilter;
+  };
 
-    UpgradeGuildHall(guildId: null, level: null, compeletedTime: null): EventFilter
+  estimateGas: {
+    CREATE_GUILD_WITH_SIG_TYPEHASH(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    UpgradeNitroLab(guildId: null, level: null, compeletedTime: null): EventFilter
-  }
+    "CREATE_GUILD_WITH_SIG_TYPEHASH()"(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-  'estimateGas': {
-    CREATE_GUILD_WITH_SIG_TYPEHASH(overrides?: CallOverrides): Promise<BigNumber>
+    JOIN_GUILD_WITH_SIG_TYPEHASH(overrides?: CallOverrides): Promise<BigNumber>;
 
-    'CREATE_GUILD_WITH_SIG_TYPEHASH()'(overrides?: CallOverrides): Promise<BigNumber>
-
-    GUILD_HALL_ID(overrides?: CallOverrides): Promise<BigNumber>
-
-    'GUILD_HALL_ID()'(overrides?: CallOverrides): Promise<BigNumber>
-
-    JOIN_GUILD_WITH_SIG_TYPEHASH(overrides?: CallOverrides): Promise<BigNumber>
-
-    'JOIN_GUILD_WITH_SIG_TYPEHASH()'(overrides?: CallOverrides): Promise<BigNumber>
-
-    NITRO_LAB_ID(overrides?: CallOverrides): Promise<BigNumber>
-
-    'NITRO_LAB_ID()'(overrides?: CallOverrides): Promise<BigNumber>
+    "JOIN_GUILD_WITH_SIG_TYPEHASH()"(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     __MechaGuild_init(
-      _nitroContract: string,
       _materialContract: string,
       _materialId: BigNumberish,
-      _mechContract: string,
+      _tokenContract: string,
       _fundingWallet: string,
       _signer: string,
       overrides?: Overrides
-    ): Promise<BigNumber>
+    ): Promise<BigNumber>;
 
-    '__MechaGuild_init(address,address,uint256,address,address,address)'(
-      _nitroContract: string,
+    "__MechaGuild_init(address,uint256,address,address,address)"(
       _materialContract: string,
       _materialId: BigNumberish,
-      _mechContract: string,
+      _tokenContract: string,
       _fundingWallet: string,
       _signer: string,
       overrides?: Overrides
-    ): Promise<BigNumber>
+    ): Promise<BigNumber>;
 
-    acceptJoinRequest(members: string[], overrides?: Overrides): Promise<BigNumber>
+    acceptJoinRequest(
+      _members: string[],
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
-    'acceptJoinRequest(address[])'(members: string[], overrides?: Overrides): Promise<BigNumber>
+    "acceptJoinRequest(address[])"(
+      _members: string[],
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
-    changeGuildMaster(newMaster: string, overrides?: Overrides): Promise<BigNumber>
+    cancelJoinRequest(overrides?: Overrides): Promise<BigNumber>;
 
-    'changeGuildMaster(address)'(newMaster: string, overrides?: Overrides): Promise<BigNumber>
+    "cancelJoinRequest()"(overrides?: Overrides): Promise<BigNumber>;
 
-    claimNitro(overrides?: Overrides): Promise<BigNumber>
+    changeAccessType(
+      _isPrivate: boolean,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
-    'claimNitro()'(overrides?: Overrides): Promise<BigNumber>
+    "changeAccessType(bool)"(
+      _isPrivate: boolean,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
     contributeGuildBase(
-      buildingType: BigNumberish,
-      amount: BigNumberish,
+      _amount: BigNumberish,
       overrides?: Overrides
-    ): Promise<BigNumber>
+    ): Promise<BigNumber>;
 
-    'contributeGuildBase(uint256,uint256)'(
-      buildingType: BigNumberish,
-      amount: BigNumberish,
+    "contributeGuildBase(uint256)"(
+      _amount: BigNumberish,
       overrides?: Overrides
-    ): Promise<BigNumber>
+    ): Promise<BigNumber>;
 
-    createGuildFee(overrides?: CallOverrides): Promise<BigNumber>
-
-    'createGuildFee()'(overrides?: CallOverrides): Promise<BigNumber>
-
-    createGuildMaterial(overrides?: CallOverrides): Promise<BigNumber>
-
-    'createGuildMaterial()'(overrides?: CallOverrides): Promise<BigNumber>
-
-    createGuildSigNonces(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
-
-    'createGuildSigNonces(address)'(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
-
-    createGuildWithSig(
-      isPrivate: boolean,
-      sig_: {
-        deadline: BigNumberish
-        v: BigNumberish
-        r: BytesLike
-        s: BytesLike
-      },
-      overrides?: Overrides
-    ): Promise<BigNumber>
-
-    'createGuildWithSig(bool,tuple)'(
-      isPrivate: boolean,
-      sig_: {
-        deadline: BigNumberish
-        v: BigNumberish
-        r: BytesLike
-        s: BytesLike
-      },
-      overrides?: Overrides
-    ): Promise<BigNumber>
-
-    fundingWallet(overrides?: CallOverrides): Promise<BigNumber>
-
-    'fundingWallet()'(overrides?: CallOverrides): Promise<BigNumber>
-
-    getCurrentBuildingLevel(
-      guildId: BigNumberish,
-      buildingType: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>
-
-    'getCurrentBuildingLevel(uint256,uint256)'(
-      guildId: BigNumberish,
-      buildingType: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>
-
-    getEthSignedMessageHash(_messageHash: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
-
-    'getEthSignedMessageHash(bytes32)'(
-      _messageHash: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>
-
-    getMemberOfGuild(guildId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-    'getMemberOfGuild(uint256)'(
-      guildId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>
-
-    getPendingMemberOfGuild(guildId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-    'getPendingMemberOfGuild(uint256)'(
-      guildId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>
-
-    getSignerAddress(
-      _messageHash: BytesLike,
-      _signature: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>
-
-    'getSignerAddress(bytes32,bytes)'(
-      _messageHash: BytesLike,
-      _signature: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>
-
-    guildCount(overrides?: CallOverrides): Promise<BigNumber>
-
-    'guildCount()'(overrides?: CallOverrides): Promise<BigNumber>
-
-    guildHall(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-    'guildHall(uint256)'(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-    guildHallSetting(
-      arg0: BigNumberish,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>
-
-    'guildHallSetting(uint256,uint256)'(
-      arg0: BigNumberish,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>
-
-    guilds(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-    'guilds(uint256)'(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-    joinGuildSigNonces(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
-
-    'joinGuildSigNonces(address)'(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
-
-    joinGuildWithSig(
-      guildId: BigNumberish,
-      sig_: {
-        deadline: BigNumberish
-        v: BigNumberish
-        r: BytesLike
-        s: BytesLike
-      },
-      overrides?: Overrides
-    ): Promise<BigNumber>
-
-    'joinGuildWithSig(uint256,tuple)'(
-      guildId: BigNumberish,
-      sig_: {
-        deadline: BigNumberish
-        v: BigNumberish
-        r: BytesLike
-        s: BytesLike
-      },
-      overrides?: Overrides
-    ): Promise<BigNumber>
-
-    kickMember(memberAddress: string, overrides?: Overrides): Promise<BigNumber>
-
-    'kickMember(address)'(memberAddress: string, overrides?: Overrides): Promise<BigNumber>
-
-    materialContract(overrides?: CallOverrides): Promise<BigNumber>
-
-    'materialContract()'(overrides?: CallOverrides): Promise<BigNumber>
-
-    materialID(overrides?: CallOverrides): Promise<BigNumber>
-
-    'materialID()'(overrides?: CallOverrides): Promise<BigNumber>
-
-    maxGuildHallLevel(overrides?: CallOverrides): Promise<BigNumber>
-
-    'maxGuildHallLevel()'(overrides?: CallOverrides): Promise<BigNumber>
-
-    maxNitroLabLevel(overrides?: CallOverrides): Promise<BigNumber>
-
-    'maxNitroLabLevel()'(overrides?: CallOverrides): Promise<BigNumber>
-
-    mechContract(overrides?: CallOverrides): Promise<BigNumber>
-
-    'mechContract()'(overrides?: CallOverrides): Promise<BigNumber>
-
-    nitroContract(overrides?: CallOverrides): Promise<BigNumber>
-
-    'nitroContract()'(overrides?: CallOverrides): Promise<BigNumber>
-
-    nitroLab(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-    'nitroLab(uint256)'(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-    nitroLabSetting(
-      arg0: BigNumberish,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>
-
-    'nitroLabSetting(uint256,uint256)'(
-      arg0: BigNumberish,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>
-
-    nitroProductionFee(overrides?: CallOverrides): Promise<BigNumber>
-
-    'nitroProductionFee()'(overrides?: CallOverrides): Promise<BigNumber>
-
-    outOfGuild(overrides?: Overrides): Promise<BigNumber>
-
-    'outOfGuild()'(overrides?: Overrides): Promise<BigNumber>
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>
-
-    'owner()'(overrides?: CallOverrides): Promise<BigNumber>
-
-    penaltyTime(overrides?: CallOverrides): Promise<BigNumber>
-
-    'penaltyTime()'(overrides?: CallOverrides): Promise<BigNumber>
-
-    produceNitro(overrides?: Overrides): Promise<BigNumber>
-
-    'produceNitro()'(overrides?: Overrides): Promise<BigNumber>
-
-    renounceOwnership(overrides?: Overrides): Promise<BigNumber>
-
-    'renounceOwnership()'(overrides?: Overrides): Promise<BigNumber>
-
-    setSigner(_signer: string, overrides?: Overrides): Promise<BigNumber>
-
-    'setSigner(address)'(_signer: string, overrides?: Overrides): Promise<BigNumber>
-
-    transferOwnership(newOwner: string, overrides?: Overrides): Promise<BigNumber>
-
-    'transferOwnership(address)'(newOwner: string, overrides?: Overrides): Promise<BigNumber>
-
-    upgradeBuilding(buildingType: BigNumberish, overrides?: Overrides): Promise<BigNumber>
-
-    'upgradeBuilding(uint256)'(
-      buildingType: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>
-
-    users(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
-
-    'users(address)'(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
-  }
-
-  'populateTransaction': {
-    CREATE_GUILD_WITH_SIG_TYPEHASH(overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-    'CREATE_GUILD_WITH_SIG_TYPEHASH()'(overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-    GUILD_HALL_ID(overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-    'GUILD_HALL_ID()'(overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-    JOIN_GUILD_WITH_SIG_TYPEHASH(overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-    'JOIN_GUILD_WITH_SIG_TYPEHASH()'(overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-    NITRO_LAB_ID(overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-    'NITRO_LAB_ID()'(overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-    __MechaGuild_init(
-      _nitroContract: string,
-      _materialContract: string,
-      _materialId: BigNumberish,
-      _mechContract: string,
-      _fundingWallet: string,
-      _signer: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>
-
-    '__MechaGuild_init(address,address,uint256,address,address,address)'(
-      _nitroContract: string,
-      _materialContract: string,
-      _materialId: BigNumberish,
-      _mechContract: string,
-      _fundingWallet: string,
-      _signer: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>
-
-    acceptJoinRequest(members: string[], overrides?: Overrides): Promise<PopulatedTransaction>
-
-    'acceptJoinRequest(address[])'(
-      members: string[],
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>
-
-    changeGuildMaster(newMaster: string, overrides?: Overrides): Promise<PopulatedTransaction>
-
-    'changeGuildMaster(address)'(
-      newMaster: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>
-
-    claimNitro(overrides?: Overrides): Promise<PopulatedTransaction>
-
-    'claimNitro()'(overrides?: Overrides): Promise<PopulatedTransaction>
-
-    contributeGuildBase(
-      buildingType: BigNumberish,
-      amount: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>
-
-    'contributeGuildBase(uint256,uint256)'(
-      buildingType: BigNumberish,
-      amount: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>
-
-    createGuildFee(overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-    'createGuildFee()'(overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-    createGuildMaterial(overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-    'createGuildMaterial()'(overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-    createGuildSigNonces(arg0: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-    'createGuildSigNonces(address)'(
+    createGuildSigNonces(
       arg0: string,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>
+    ): Promise<BigNumber>;
+
+    "createGuildSigNonces(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     createGuildWithSig(
-      isPrivate: boolean,
-      sig_: {
-        deadline: BigNumberish
-        v: BigNumberish
-        r: BytesLike
-        s: BytesLike
+      _isPrivate: boolean,
+      _sig: {
+        deadline: BigNumberish;
+        v: BigNumberish;
+        r: BytesLike;
+        s: BytesLike;
       },
       overrides?: Overrides
-    ): Promise<PopulatedTransaction>
+    ): Promise<BigNumber>;
 
-    'createGuildWithSig(bool,tuple)'(
-      isPrivate: boolean,
-      sig_: {
-        deadline: BigNumberish
-        v: BigNumberish
-        r: BytesLike
-        s: BytesLike
+    "createGuildWithSig(bool,tuple)"(
+      _isPrivate: boolean,
+      _sig: {
+        deadline: BigNumberish;
+        v: BigNumberish;
+        r: BytesLike;
+        s: BytesLike;
       },
       overrides?: Overrides
-    ): Promise<PopulatedTransaction>
+    ): Promise<BigNumber>;
 
-    fundingWallet(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    createMaterialFee(overrides?: CallOverrides): Promise<BigNumber>;
 
-    'fundingWallet()'(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    "createMaterialFee()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    createTokenFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "createTokenFee()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    denyJoinRequest(
+      _members: string[],
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "denyJoinRequest(address[])"(
+      _members: string[],
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    fundingWallet(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "fundingWallet()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getCurrentBuildingLevel(
       guildId: BigNumberish,
-      buildingType: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>
+    ): Promise<BigNumber>;
 
-    'getCurrentBuildingLevel(uint256,uint256)'(
+    "getCurrentBuildingLevel(uint256)"(
       guildId: BigNumberish,
-      buildingType: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>
-
-    getEthSignedMessageHash(
-      _messageHash: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>
-
-    'getEthSignedMessageHash(bytes32)'(
-      _messageHash: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>
+    ): Promise<BigNumber>;
 
     getMemberOfGuild(
       guildId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>
+    ): Promise<BigNumber>;
 
-    'getMemberOfGuild(uint256)'(
+    "getMemberOfGuild(uint256)"(
       guildId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>
+    ): Promise<BigNumber>;
 
     getPendingMemberOfGuild(
       guildId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>
+    ): Promise<BigNumber>;
 
-    'getPendingMemberOfGuild(uint256)'(
+    "getPendingMemberOfGuild(uint256)"(
       guildId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>
+    ): Promise<BigNumber>;
 
-    getSignerAddress(
-      _messageHash: BytesLike,
-      _signature: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>
-
-    'getSignerAddress(bytes32,bytes)'(
-      _messageHash: BytesLike,
-      _signature: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>
-
-    guildCount(overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-    'guildCount()'(overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-    guildHall(arg0: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-    'guildHall(uint256)'(
+    guildContribution(
       arg0: BigNumberish,
+      arg1: string,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>
+    ): Promise<BigNumber>;
 
-    guildHallSetting(
+    "guildContribution(uint256,address)"(
+      arg0: BigNumberish,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    guildCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "guildCount()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    guildHallSettings(
       arg0: BigNumberish,
       arg1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>
+    ): Promise<BigNumber>;
 
-    'guildHallSetting(uint256,uint256)'(
+    "guildHallSettings(uint256,uint256)"(
       arg0: BigNumberish,
       arg1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>
+    ): Promise<BigNumber>;
 
-    guilds(arg0: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
+    guildHalls(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    'guilds(uint256)'(arg0: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
+    "guildHalls(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    joinGuildSigNonces(arg0: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+    guilds(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
-    'joinGuildSigNonces(address)'(
+    "guilds(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    increaseMaxGuildHallLevel(
+      _maxMember: BigNumberish,
+      _upgradeTime: BigNumberish,
+      _cost: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "increaseMaxGuildHallLevel(uint256,uint256,uint256)"(
+      _maxMember: BigNumberish,
+      _upgradeTime: BigNumberish,
+      _cost: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    joinGuildSigNonces(
       arg0: string,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>
+    ): Promise<BigNumber>;
+
+    "joinGuildSigNonces(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     joinGuildWithSig(
-      guildId: BigNumberish,
-      sig_: {
-        deadline: BigNumberish
-        v: BigNumberish
-        r: BytesLike
-        s: BytesLike
+      _guildId: BigNumberish,
+      _sig: {
+        deadline: BigNumberish;
+        v: BigNumberish;
+        r: BytesLike;
+        s: BytesLike;
       },
       overrides?: Overrides
-    ): Promise<PopulatedTransaction>
+    ): Promise<BigNumber>;
 
-    'joinGuildWithSig(uint256,tuple)'(
-      guildId: BigNumberish,
-      sig_: {
-        deadline: BigNumberish
-        v: BigNumberish
-        r: BytesLike
-        s: BytesLike
+    "joinGuildWithSig(uint256,tuple)"(
+      _guildId: BigNumberish,
+      _sig: {
+        deadline: BigNumberish;
+        v: BigNumberish;
+        r: BytesLike;
+        s: BytesLike;
       },
       overrides?: Overrides
-    ): Promise<PopulatedTransaction>
+    ): Promise<BigNumber>;
 
-    kickMember(memberAddress: string, overrides?: Overrides): Promise<PopulatedTransaction>
+    kickMember(_member: string, overrides?: Overrides): Promise<BigNumber>;
 
-    'kickMember(address)'(
-      memberAddress: string,
+    "kickMember(address)"(
+      _member: string,
       overrides?: Overrides
-    ): Promise<PopulatedTransaction>
+    ): Promise<BigNumber>;
 
-    materialContract(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    materialContract(overrides?: CallOverrides): Promise<BigNumber>;
 
-    'materialContract()'(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    "materialContract()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    materialID(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    materialID(overrides?: CallOverrides): Promise<BigNumber>;
 
-    'materialID()'(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    "materialID()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    maxGuildHallLevel(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    maxGuildHallLevel(overrides?: CallOverrides): Promise<BigNumber>;
 
-    'maxGuildHallLevel()'(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    "maxGuildHallLevel()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    maxNitroLabLevel(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    outOfGuild(overrides?: Overrides): Promise<BigNumber>;
 
-    'maxNitroLabLevel()'(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    "outOfGuild()"(overrides?: Overrides): Promise<BigNumber>;
 
-    mechContract(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
 
-    'mechContract()'(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    "owner()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    nitroContract(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    penaltyTime(overrides?: CallOverrides): Promise<BigNumber>;
 
-    'nitroContract()'(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    "penaltyTime()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    nitroLab(arg0: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-    'nitroLab(uint256)'(
-      arg0: BigNumberish,
+    pendingRequests(
+      arg0: string,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>
+    ): Promise<BigNumber>;
 
-    nitroLabSetting(
-      arg0: BigNumberish,
-      arg1: BigNumberish,
+    "pendingRequests(address)"(
+      arg0: string,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>
+    ): Promise<BigNumber>;
 
-    'nitroLabSetting(uint256,uint256)'(
-      arg0: BigNumberish,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>
+    promoteNewMaster(
+      _newMaster: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
-    nitroProductionFee(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    "promoteNewMaster(address)"(
+      _newMaster: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
-    'nitroProductionFee()'(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    renounceOwnership(overrides?: Overrides): Promise<BigNumber>;
 
-    outOfGuild(overrides?: Overrides): Promise<PopulatedTransaction>
+    "renounceOwnership()"(overrides?: Overrides): Promise<BigNumber>;
 
-    'outOfGuild()'(overrides?: Overrides): Promise<PopulatedTransaction>
+    setCreateFee(
+      _tokenFee: BigNumberish,
+      _materialFee: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    "setCreateFee(uint256,uint256)"(
+      _tokenFee: BigNumberish,
+      _materialFee: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
-    'owner()'(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    setFundingWallet(
+      _fundingWallet: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
-    penaltyTime(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    "setFundingWallet(address)"(
+      _fundingWallet: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
-    'penaltyTime()'(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    setGuildHallLevelSetting(
+      _level: BigNumberish,
+      _maxMember: BigNumberish,
+      _upgradeTime: BigNumberish,
+      _cost: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
-    produceNitro(overrides?: Overrides): Promise<PopulatedTransaction>
+    "setGuildHallLevelSetting(uint256,uint256,uint256,uint256)"(
+      _level: BigNumberish,
+      _maxMember: BigNumberish,
+      _upgradeTime: BigNumberish,
+      _cost: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
-    'produceNitro()'(overrides?: Overrides): Promise<PopulatedTransaction>
+    setPenaltyTime(
+      _penaltyTime: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
-    renounceOwnership(overrides?: Overrides): Promise<PopulatedTransaction>
+    "setPenaltyTime(uint256)"(
+      _penaltyTime: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
-    'renounceOwnership()'(overrides?: Overrides): Promise<PopulatedTransaction>
+    setSigner(_signer: string, overrides?: Overrides): Promise<BigNumber>;
 
-    setSigner(_signer: string, overrides?: Overrides): Promise<PopulatedTransaction>
+    "setSigner(address)"(
+      _signer: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
-    'setSigner(address)'(_signer: string, overrides?: Overrides): Promise<PopulatedTransaction>
+    tokenContract(overrides?: CallOverrides): Promise<BigNumber>;
 
-    transferOwnership(newOwner: string, overrides?: Overrides): Promise<PopulatedTransaction>
+    "tokenContract()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    'transferOwnership(address)'(
+    transferOwnership(
       newOwner: string,
       overrides?: Overrides
-    ): Promise<PopulatedTransaction>
+    ): Promise<BigNumber>;
 
-    upgradeBuilding(
-      buildingType: BigNumberish,
+    "transferOwnership(address)"(
+      newOwner: string,
       overrides?: Overrides
-    ): Promise<PopulatedTransaction>
+    ): Promise<BigNumber>;
 
-    'upgradeBuilding(uint256)'(
-      buildingType: BigNumberish,
+    upgradeBuilding(overrides?: Overrides): Promise<BigNumber>;
+
+    "upgradeBuilding()"(overrides?: Overrides): Promise<BigNumber>;
+
+    users(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    "users(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+  };
+
+  populateTransaction: {
+    CREATE_GUILD_WITH_SIG_TYPEHASH(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "CREATE_GUILD_WITH_SIG_TYPEHASH()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    JOIN_GUILD_WITH_SIG_TYPEHASH(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "JOIN_GUILD_WITH_SIG_TYPEHASH()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    __MechaGuild_init(
+      _materialContract: string,
+      _materialId: BigNumberish,
+      _tokenContract: string,
+      _fundingWallet: string,
+      _signer: string,
       overrides?: Overrides
-    ): Promise<PopulatedTransaction>
+    ): Promise<PopulatedTransaction>;
 
-    users(arg0: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+    "__MechaGuild_init(address,uint256,address,address,address)"(
+      _materialContract: string,
+      _materialId: BigNumberish,
+      _tokenContract: string,
+      _fundingWallet: string,
+      _signer: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
 
-    'users(address)'(arg0: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
-  }
+    acceptJoinRequest(
+      _members: string[],
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "acceptJoinRequest(address[])"(
+      _members: string[],
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    cancelJoinRequest(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    "cancelJoinRequest()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    changeAccessType(
+      _isPrivate: boolean,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "changeAccessType(bool)"(
+      _isPrivate: boolean,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    contributeGuildBase(
+      _amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "contributeGuildBase(uint256)"(
+      _amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    createGuildSigNonces(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "createGuildSigNonces(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    createGuildWithSig(
+      _isPrivate: boolean,
+      _sig: {
+        deadline: BigNumberish;
+        v: BigNumberish;
+        r: BytesLike;
+        s: BytesLike;
+      },
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "createGuildWithSig(bool,tuple)"(
+      _isPrivate: boolean,
+      _sig: {
+        deadline: BigNumberish;
+        v: BigNumberish;
+        r: BytesLike;
+        s: BytesLike;
+      },
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    createMaterialFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "createMaterialFee()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    createTokenFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "createTokenFee()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    denyJoinRequest(
+      _members: string[],
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "denyJoinRequest(address[])"(
+      _members: string[],
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    fundingWallet(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "fundingWallet()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getCurrentBuildingLevel(
+      guildId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getCurrentBuildingLevel(uint256)"(
+      guildId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getMemberOfGuild(
+      guildId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getMemberOfGuild(uint256)"(
+      guildId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getPendingMemberOfGuild(
+      guildId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getPendingMemberOfGuild(uint256)"(
+      guildId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    guildContribution(
+      arg0: BigNumberish,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "guildContribution(uint256,address)"(
+      arg0: BigNumberish,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    guildCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "guildCount()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    guildHallSettings(
+      arg0: BigNumberish,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "guildHallSettings(uint256,uint256)"(
+      arg0: BigNumberish,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    guildHalls(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "guildHalls(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    guilds(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "guilds(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    increaseMaxGuildHallLevel(
+      _maxMember: BigNumberish,
+      _upgradeTime: BigNumberish,
+      _cost: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "increaseMaxGuildHallLevel(uint256,uint256,uint256)"(
+      _maxMember: BigNumberish,
+      _upgradeTime: BigNumberish,
+      _cost: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    joinGuildSigNonces(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "joinGuildSigNonces(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    joinGuildWithSig(
+      _guildId: BigNumberish,
+      _sig: {
+        deadline: BigNumberish;
+        v: BigNumberish;
+        r: BytesLike;
+        s: BytesLike;
+      },
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "joinGuildWithSig(uint256,tuple)"(
+      _guildId: BigNumberish,
+      _sig: {
+        deadline: BigNumberish;
+        v: BigNumberish;
+        r: BytesLike;
+        s: BytesLike;
+      },
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    kickMember(
+      _member: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "kickMember(address)"(
+      _member: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    materialContract(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "materialContract()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    materialID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "materialID()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    maxGuildHallLevel(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "maxGuildHallLevel()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    outOfGuild(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    "outOfGuild()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "owner()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    penaltyTime(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "penaltyTime()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    pendingRequests(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "pendingRequests(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    promoteNewMaster(
+      _newMaster: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "promoteNewMaster(address)"(
+      _newMaster: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    renounceOwnership(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    "renounceOwnership()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    setCreateFee(
+      _tokenFee: BigNumberish,
+      _materialFee: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setCreateFee(uint256,uint256)"(
+      _tokenFee: BigNumberish,
+      _materialFee: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    setFundingWallet(
+      _fundingWallet: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setFundingWallet(address)"(
+      _fundingWallet: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    setGuildHallLevelSetting(
+      _level: BigNumberish,
+      _maxMember: BigNumberish,
+      _upgradeTime: BigNumberish,
+      _cost: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setGuildHallLevelSetting(uint256,uint256,uint256,uint256)"(
+      _level: BigNumberish,
+      _maxMember: BigNumberish,
+      _upgradeTime: BigNumberish,
+      _cost: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    setPenaltyTime(
+      _penaltyTime: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setPenaltyTime(uint256)"(
+      _penaltyTime: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    setSigner(
+      _signer: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setSigner(address)"(
+      _signer: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    tokenContract(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "tokenContract()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "transferOwnership(address)"(
+      newOwner: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    upgradeBuilding(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    "upgradeBuilding()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    users(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "users(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+  };
 }

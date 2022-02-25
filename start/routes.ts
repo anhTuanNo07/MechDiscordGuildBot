@@ -20,34 +20,23 @@
 
 import Route from '@ioc:Adonis/Core/Route'
 
-Route.get('/', async () => {
-  return { hello: 'world' }
-})
+// webhook events route
+Route.post('webhook/events', 'EventsController.processEvent').middleware('webhookAuth')
 
+// backend routes
 Route.group(() => {
-  // --- Check valid user ---
-  // userInformation can be the username if pass with discriminator or userId
-  Route.get('verify/:userInformation/:discriminator?', 'DiscordBotsController.checkValidUser')
-
-  // --- Role CRUD ---
-  Route.get('role/:id', 'DiscordBotsController.getRole')
-  Route.post('role', 'DiscordBotsController.createNewRole')
-  Route.patch('role/:id', 'DiscordBotsController.updateRole')
-  Route.delete('role/:id', 'DiscordBotsController.deleteRole')
-
-  // --- Assign role for user ---
-  Route.post('user-role', 'GuildMembersController.assignUserRole')
-  Route.delete('user-role', 'GuildMembersController.removeUserRole')
-
-  // --- GuildMember ---
-  // special strong for assign master guild
-  Route.patch('user/:id', 'GuildMembersController.updateGuildMember')
-
-  // --- GuildManager ---
+  Route.post('verify', 'DiscordBotsController.checkValidUser')
+  // --- guild backend CRUD ---
   Route.post('guild', 'GuildChannelsController.createGuild')
-  Route.patch('guild/:guildId', 'GuildChannelsController.updateGuild')
-  Route.get('guild/:guildId', 'GuildChannelsController.getGuild')
+  Route.patch('guild', 'GuildChannelsController.updateGuildBackend')
+  Route.get('guild/:id?', 'GuildChannelsController.getGuild')
   // Cannot delete guild as information on blockchain is uncertainty
-})
-  .prefix('api/discord')
-  .middleware('webhookAuth')
+  // --- guild member backend ---
+
+  // sign member join guild
+  Route.post('join', 'GuildMembersController.joinGuild')
+  // member CRUD
+  Route.put('member', 'GuildMembersController.updateMemberBackend')
+  Route.get('member/:wallet?', 'GuildMembersController.getMembers')
+  // no need to have delete member
+}).prefix('api/backend')

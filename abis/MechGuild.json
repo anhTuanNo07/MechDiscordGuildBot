@@ -10,87 +10,12 @@
       },
       {
         "indexed": false,
-        "internalType": "address",
-        "name": "oldGuildMaster",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "newGuildMaster",
-        "type": "address"
+        "internalType": "bool",
+        "name": "isPrivate",
+        "type": "bool"
       }
     ],
-    "name": "ChangedGuildMaster",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "guildId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "member",
-        "type": "address"
-      }
-    ],
-    "name": "ClaimedNitro",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "guildId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "member",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amountMaterial",
-        "type": "uint256"
-      }
-    ],
-    "name": "ContributeGuildHall",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "guildId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "member",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amountMaterial",
-        "type": "uint256"
-      }
-    ],
-    "name": "ContributeNitroLab",
+    "name": "GuildAccessChanged",
     "type": "event"
   },
   {
@@ -110,12 +35,93 @@
       },
       {
         "indexed": false,
+        "internalType": "uint256",
+        "name": "sigNonce",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
         "internalType": "bool",
         "name": "isPrivate",
         "type": "bool"
       }
     ],
-    "name": "CreatedGuild",
+    "name": "GuildCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "guildId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "member",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amountMaterial",
+        "type": "uint256"
+      }
+    ],
+    "name": "GuildHallContributed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "guildId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "level",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "compeletedTime",
+        "type": "uint256"
+      }
+    ],
+    "name": "GuildHallUpgraded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "guildId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "oldMaster",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newMaster",
+        "type": "address"
+      }
+    ],
+    "name": "GuildMasterChanged",
     "type": "event"
   },
   {
@@ -187,17 +193,11 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "member",
+        "name": "memberAddress",
         "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "completedTime",
-        "type": "uint256"
       }
     ],
-    "name": "ProduceNitro",
+    "name": "RequestCanceled",
     "type": "event"
   },
   {
@@ -220,56 +220,6 @@
     "type": "event"
   },
   {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "guildId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "level",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "compeletedTime",
-        "type": "uint256"
-      }
-    ],
-    "name": "UpgradeGuildHall",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "guildId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "level",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "compeletedTime",
-        "type": "uint256"
-      }
-    ],
-    "name": "UpgradeNitroLab",
-    "type": "event"
-  },
-  {
     "inputs": [],
     "name": "CREATE_GUILD_WITH_SIG_TYPEHASH",
     "outputs": [
@@ -277,19 +227,6 @@
         "internalType": "bytes32",
         "name": "",
         "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "GUILD_HALL_ID",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -309,25 +246,7 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "NITRO_LAB_ID",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_nitroContract",
-        "type": "address"
-      },
       {
         "internalType": "address",
         "name": "_materialContract",
@@ -340,7 +259,7 @@
       },
       {
         "internalType": "address",
-        "name": "_mechContract",
+        "name": "_tokenContract",
         "type": "address"
       },
       {
@@ -363,7 +282,7 @@
     "inputs": [
       {
         "internalType": "address[]",
-        "name": "members",
+        "name": "_members",
         "type": "address[]"
       }
     ],
@@ -373,21 +292,21 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "cancelJoinRequest",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "newMaster",
-        "type": "address"
+        "internalType": "bool",
+        "name": "_isPrivate",
+        "type": "bool"
       }
     ],
-    "name": "changeGuildMaster",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "claimNitro",
+    "name": "changeAccessType",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -396,44 +315,13 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "buildingType",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount",
+        "name": "_amount",
         "type": "uint256"
       }
     ],
     "name": "contributeGuildBase",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "createGuildFee",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "createGuildMaterial",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -459,7 +347,7 @@
     "inputs": [
       {
         "internalType": "bool",
-        "name": "isPrivate",
+        "name": "_isPrivate",
         "type": "bool"
       },
       {
@@ -486,11 +374,50 @@
           }
         ],
         "internalType": "struct MechGuild.EIP712Signature",
-        "name": "sig_",
+        "name": "_sig",
         "type": "tuple"
       }
     ],
     "name": "createGuildWithSig",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "createMaterialFee",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "createTokenFee",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "_members",
+        "type": "address[]"
+      }
+    ],
+    "name": "denyJoinRequest",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -514,11 +441,6 @@
         "internalType": "uint256",
         "name": "guildId",
         "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "buildingType",
-        "type": "uint256"
       }
     ],
     "name": "getCurrentBuildingLevel",
@@ -530,25 +452,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "_messageHash",
-        "type": "bytes32"
-      }
-    ],
-    "name": "getEthSignedMessageHash",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -592,25 +495,25 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "_messageHash",
-        "type": "bytes32"
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       },
-      {
-        "internalType": "bytes",
-        "name": "_signature",
-        "type": "bytes"
-      }
-    ],
-    "name": "getSignerAddress",
-    "outputs": [
       {
         "internalType": "address",
         "name": "",
         "type": "address"
       }
     ],
-    "stateMutability": "pure",
+    "name": "guildContribution",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -632,9 +535,33 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
-    "name": "guildHall",
+    "name": "guildHallSettings",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "guildHalls",
     "outputs": [
       {
         "internalType": "uint256",
@@ -649,30 +576,6 @@
       {
         "internalType": "uint256",
         "name": "completedTime",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "guildHallSetting",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
         "type": "uint256"
       }
     ],
@@ -706,6 +609,29 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "_maxMember",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_upgradeTime",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_cost",
+        "type": "uint256"
+      }
+    ],
+    "name": "increaseMaxGuildHallLevel",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "",
         "type": "address"
@@ -726,7 +652,7 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "guildId",
+        "name": "_guildId",
         "type": "uint256"
       },
       {
@@ -753,7 +679,7 @@
           }
         ],
         "internalType": "struct MechGuild.EIP712Signature",
-        "name": "sig_",
+        "name": "_sig",
         "type": "tuple"
       }
     ],
@@ -766,7 +692,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "memberAddress",
+        "name": "_member",
         "type": "address"
       }
     ],
@@ -816,111 +742,6 @@
   },
   {
     "inputs": [],
-    "name": "maxNitroLabLevel",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "mechContract",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "nitroContract",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "nitroLab",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "materials",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "level",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "completedTime",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "nitroLabSetting",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "nitroProductionFee",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "outOfGuild",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -953,8 +774,33 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "produceNitro",
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "pendingRequests",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_newMaster",
+        "type": "address"
+      }
+    ],
+    "name": "promoteNewMaster",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -962,6 +808,78 @@
   {
     "inputs": [],
     "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_tokenFee",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_materialFee",
+        "type": "uint256"
+      }
+    ],
+    "name": "setCreateFee",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_fundingWallet",
+        "type": "address"
+      }
+    ],
+    "name": "setFundingWallet",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_level",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_maxMember",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_upgradeTime",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_cost",
+        "type": "uint256"
+      }
+    ],
+    "name": "setGuildHallLevelSetting",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_penaltyTime",
+        "type": "uint256"
+      }
+    ],
+    "name": "setPenaltyTime",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -980,6 +898,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "tokenContract",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -993,13 +924,7 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "buildingType",
-        "type": "uint256"
-      }
-    ],
+    "inputs": [],
     "name": "upgradeBuilding",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -1027,27 +952,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "guildHallContribution",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "nitroLabContribution",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "producedNitro",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "produceCompletedTime",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "claimedNitro",
+        "name": "contributionPoint",
         "type": "uint256"
       }
     ],
