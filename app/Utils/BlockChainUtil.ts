@@ -3,8 +3,10 @@ import Env from '@ioc:Adonis/Core/Env'
 import { ethers, utils } from 'ethers'
 import { MechGuild } from 'Types/MechGuild'
 import MechGuildAbi from 'Abis/MechGuild.json'
+import NitroAbi from 'Abis/Nitro.json'
 import { fromRpcSig } from 'ethereumjs-util'
 import { BigNumberish } from 'ethers'
+import { Nitro } from 'Types/Nitro'
 
 export const readOnlyProvider = new ethers.providers.JsonRpcProvider(Env.get('NETWORK_URL'))
 
@@ -12,6 +14,9 @@ export const signer = new ethers.Wallet(Env.get('SIGNER_PRIVATE_KEY')).connect(r
 
 export const getMechGuildContract = (): MechGuild =>
   new ethers.Contract(Env.get('MECH_GUILD_CONTRACT'), MechGuildAbi, readOnlyProvider) as MechGuild
+
+export const getNitroContract = (): Nitro =>
+  new ethers.Contract(Env.get('NITRO_CONTRACT'), NitroAbi, readOnlyProvider) as Nitro
 
 // verify signature
 export function verifyLinkDiscordWalletSign({ sig, wallet, discordId, signer }: any): boolean {
@@ -178,6 +183,70 @@ export async function signJoinGuild(guildId: BigNumberish, member: string, backe
 
       const sig = await backend._signTypedData(domain, types, message)
 
+      const response = fromRpcSig(sig)
+      res({
+        r: response.r,
+        s: response.s,
+        v: response.v,
+        deadline: deadline.toString(),
+      })
+    } catch (e) {
+      console.error(e)
+      reject(e)
+    }
+  })
+}
+
+// verification for nitro
+export async function signClaimNitro(
+  nitroAddress: string,
+  signer: any,
+  account: string,
+  challenge: number,
+  nitroId: number,
+  amount: number
+) {
+  return new Promise<EIP712Sig>(async (res, reject) => {
+    let nonce
+    const nitro = getNitroContract()
+
+    try {
+      nonce = (await nitro.claimAccountRewardWithSigNonces(account)).toNumber()
+    } catch (e) {
+      console.error('NONCE', e)
+      reject(e)
+      return
+    }
+
+    const deadline = Math.floor(new Date().getTime() / 1000) + 60 * 60 * 24 // 24 hours
+    try {
+      const types = {
+        ClaimAccountRewardWithSig: [
+          { name: 'account', type: 'address' },
+          { name: 'challenge', type: 'uint256' },
+          { name: 'nitroId', type: 'uint256' },
+          { name: 'amount', type: 'uint256' },
+          { name: 'nonce', type: 'uint256' },
+          { name: 'deadline', type: 'uint256' },
+        ],
+      }
+
+      const domain = {
+        name: 'Nitro',
+        version: '1',
+        verifyingContract: nitroAddress,
+      }
+
+      const message = {
+        account,
+        challenge,
+        nitroId,
+        amount,
+        nonce,
+        deadline,
+      }
+
+      const sig = await signer._signTypedData(domain, types, message)
       const response = fromRpcSig(sig)
       res({
         r: response.r,

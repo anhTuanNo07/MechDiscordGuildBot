@@ -29,6 +29,12 @@ export default class UserBackend extends BaseModel {
   @column()
   public valid: boolean
 
+  @column()
+  public nitroId: number
+
+  @column()
+  public lastClaimNitro: DateTime
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

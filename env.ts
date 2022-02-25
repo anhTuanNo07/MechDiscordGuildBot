@@ -38,4 +38,9 @@ export default Env.rules({
   NETWORK_URL: Env.schema.string(),
   MECH_GUILD_CONTRACT: Env.schema.string(),
   SIGNER_PRIVATE_KEY: Env.schema.string(),
+  NITRO_CONTRACT: Env.schema.string(),
+  // The graph endpoint
+  GRAPH_ENDPOINT: Env.schema.string(),
+  // Moonrace api
+  MOONRACE_API: Env.schema.string(),
 })

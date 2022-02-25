@@ -39,4 +39,8 @@ Route.group(() => {
   Route.put('member', 'GuildMembersController.updateMemberBackend')
   Route.get('member/:wallet?', 'GuildMembersController.getMembers')
   // no need to have delete member
+
+  // --- NITRO LAB ---
+  Route.post('nitro-lab/craft', 'NitroLabsController.craftNitro')
+  Route.post('nitro-lab/sign', 'NitroLabsController.signNitro')
 }).prefix('api/backend')
