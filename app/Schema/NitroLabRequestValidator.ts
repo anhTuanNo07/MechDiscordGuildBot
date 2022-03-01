@@ -6,7 +6,6 @@ const craftNitro = {
 
 const signNitro = {
   account: schema.string(),
-  challenge: schema.number(),
 }
 
 export const signNitroValidator = schema.create(signNitro)

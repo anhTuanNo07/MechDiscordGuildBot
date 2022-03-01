@@ -1,9 +1,11 @@
+import { getNitroContract } from './../../Utils/BlockChainUtil'
 import { CraftNitroByLevel } from './../../const/nitroConst'
 import Env from '@ioc:Adonis/Core/Env'
 import { getMechGuildContract, signClaimNitro, signer } from 'App/Utils/BlockChainUtil'
 import { craftNitroValidator, signNitroValidator } from './../../Schema/NitroLabRequestValidator'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import UserBackend from 'App/Models/UserBackend'
+import Nitro from 'App/Models/Nitro'
 import { DateTime } from 'luxon'
 
 export default class NitroLabsController {
@@ -23,37 +25,45 @@ export default class NitroLabsController {
       })
     }
 
-    // check crafting status
-    const lastNitroId = Account.nitroId
-    if (lastNitroId) {
-      return response.ok({
-        statusCode: 200,
-        message: 'nitro already crafted',
+    // check claim status
+    let nitroRecord = await Nitro.query().orderBy('challenge_id', 'desc').first()
+    // first time craft
+    if (!nitroRecord) {
+      nitroRecord = await Nitro.create({
+        challengeId: Env.get('START_CHALLENGE_ID'),
+        userId: Account.id,
+        nitroId: await this.generateRandomNitroId(payload.account),
+        retry: 0,
       })
-    } else {
-      const guildId = (await getMechGuildContract().users(payload.account)).guildId
-      const guildLevel = (await getMechGuildContract().guildHalls(guildId)).level
-      const CraftNitro = CraftNitroByLevel
-      const randomNumber = Math.floor(Math.random() * 101)
-      let nitroId
-      for (let i = 0; i <= 3; i++) {
-        if (
-          randomNumber >= CraftNitro[guildLevel.toNumber() - 1][i] &&
-          randomNumber <= CraftNitro[guildLevel.toNumber() - 1][i + 1]
-        ) {
-          console.log(randomNumber)
-          nitroId = i + 1
-          break
-        }
-      }
-      // assign last nitroId for account
-      Account.nitroId = nitroId
-      await Account.save()
       return response.ok({
         statusCode: 200,
         message: 'craft nitro successfully',
       })
     }
+
+    // check claimed
+    const isClaimed = await getNitroContract().accountClaimedReward(
+      payload.account,
+      nitroRecord.challengeId
+    )
+    if (!isClaimed) {
+      return response.ok({
+        statusCode: 200,
+        message: 'Nitro already crafted',
+      })
+    }
+    // nitro claimed and craft another nitro
+    await Nitro.create({
+      challengeId: nitroRecord.challengeId + 1,
+      userId: Account.id,
+      nitroId: await this.generateRandomNitroId(payload.account),
+      retry: 0,
+    })
+
+    return response.ok({
+      statusCode: 200,
+      message: 'craft nitro successfully',
+    })
   }
 
   public async signNitro({ request, response }: HttpContextContract) {
@@ -73,8 +83,9 @@ export default class NitroLabsController {
     }
 
     // validate enough pending time
-    const lastClaimNitro = Account.lastClaimNitro
-    if (lastClaimNitro && lastClaimNitro.plus({ days: 1 }) > DateTime.now()) {
+    let nitroRecord = await Nitro.query().orderBy('challenge_id', 'desc').first()
+    const lastCraftNitro = nitroRecord?.createdAt
+    if (lastCraftNitro && lastCraftNitro.plus({ days: 1 }) > DateTime.now()) {
       return response.badRequest({
         statusCode: 400,
         message: 'not reach claim moment',
@@ -85,40 +96,59 @@ export default class NitroLabsController {
 
     let signature
     // sign claim nitro
-    try {
-      // update last claim time before sign claim nitro
-      Account.lastClaimNitro = DateTime.now()
-      await Account.save()
-      // sign claim nitro
-      const Signer = signer
-      signature = await signClaimNitro(
-        Env.get('NITRO_ADDRESS'),
-        Signer,
-        payload.account,
-        payload.challenge,
-        Account.nitroId,
-        amount
-      )
-    } catch (error) {
-      Account.lastClaimNitro = lastClaimNitro
-      await Account.save()
-
-      response.internalServerError({
-        statusCode: 500,
-        message: 'save last claim nitro or sign error',
-      })
-      return
+    if (nitroRecord) {
+      try {
+        // update last claim time before sign claim nitro
+        nitroRecord.lastClaimNitro = DateTime.now()
+        nitroRecord.retry = nitroRecord.retry + 1
+        await nitroRecord.save()
+        // sign claim nitro
+        const Signer = signer
+        signature = await signClaimNitro(
+          Env.get('NITRO_ADDRESS'),
+          Signer,
+          payload.account,
+          1,
+          nitroRecord.nitroId,
+          amount
+        )
+      } catch (error) {
+        response.internalServerError({
+          statusCode: 500,
+          message: 'save last claim nitro or sign error',
+        })
+        return
+      }
     }
-
-    // reset nitro id
-    Account.nitroId = 0
-    await Account.save()
 
     // return data
     response.ok({
       statusCode: 200,
       message: 'sign claim nitro successfully',
-      data: signature,
+      data: {
+        signature,
+        nitroId: nitroRecord?.nitroId,
+        challengeId: nitroRecord?.challengeId,
+        retry: nitroRecord?.retry,
+      },
     })
+  }
+
+  // generate random nitro id with probability based on guild hall level
+  private async generateRandomNitroId(account: string): Promise<number> {
+    const guildId = (await getMechGuildContract().users(account)).guildId
+    const guildLevel = (await getMechGuildContract().guildHalls(guildId)).level
+    const CraftNitro = CraftNitroByLevel
+    const randomNumber = Math.floor(Math.random() * 101)
+    let nitroId = 0
+    for (let i = 0; i <= 3; i++) {
+      if (
+        randomNumber >= CraftNitro[guildLevel.toNumber() - 1][i] &&
+        randomNumber <= CraftNitro[guildLevel.toNumber() - 1][i + 1]
+      ) {
+        nitroId = i + 1
+      }
+    }
+    return nitroId
   }
 }

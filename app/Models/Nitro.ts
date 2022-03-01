@@ -1,33 +1,24 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
 
-export default class UserBackend extends BaseModel {
+export default class Nitro extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
   @column()
-  public role: string | null
+  public challengeId: number
 
   @column()
-  public address: string
+  public userId: number
 
   @column()
-  public discordId: string | null
+  public nitroId: number
 
   @column()
-  public mechaOwn: number | null
+  public lastClaimNitro: DateTime
 
   @column()
-  public distance: number | null
-
-  @column()
-  public contribution: string | null
-
-  @column()
-  public guildPoint: string | null
-
-  @column()
-  public valid: boolean
+  public retry: number
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

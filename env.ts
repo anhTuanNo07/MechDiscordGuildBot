@@ -43,4 +43,6 @@ export default Env.rules({
   GRAPH_ENDPOINT: Env.schema.string(),
   // Moonrace api
   MOONRACE_API: Env.schema.string(),
+  // Nitro Lab
+  START_CHALLENGE_ID: Env.schema.number(),
 })
